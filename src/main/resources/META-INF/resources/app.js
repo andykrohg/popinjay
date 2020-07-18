@@ -1,7 +1,7 @@
 var autoRefreshCount = 0;
 var autoRefreshIntervalId = null;
 
-function refreshTimeTable() {
+function refreshWingsSchedule() {
     $.getJSON("/wingsSchedule", function (wingsSchedule) {
         refreshSolvingButtons(wingsSchedule.solverStatus != null && wingsSchedule.solverStatus !== "NOT_SOLVING");
         $("#score").text("Score: "+ (wingsSchedule.score == null ? "?" : wingsSchedule.score));
@@ -48,19 +48,19 @@ function refreshTimeTable() {
         const tbodyByMentor = $("<tbody>").appendTo(wingsScheduleByMentor);
         const tbodyByTeacher = $("<tbody>").appendTo(timeTableByTeacher);
         const tbodyByStudentGroup = $("<tbody>").appendTo(timeTableByStudentGroup);
-        const wingsRunList = [...new Set(wingsSchedule.mentorAssignments.map(mentorAssignment => mentorAssignment.wingsRun))]
-        $.each(wingsRunList, (index, wingsRun) => {
+        // const wingsRunList = [...new Set(wingsSchedule.mentorAssignments.map(mentorAssignment => mentorAssignment.wingsRun))]
+        $.each(wingsSchedule.mentorAssignments, (index, mentorAssignment) => {
             const rowByMentor = $("<tr>").appendTo(tbodyByMentor);
             rowByMentor
             .append($(`<th class="align-middle"/>`)
                 .append($("<span/>").text(`
-                    ${wingsRun.startTime}
+                    ${mentorAssignment.wingsRun.startTime}
                     -
-                    ${wingsRun.endTime}
+                    ${mentorAssignment.wingsRun.endTime}
                 `)
                 .append($(`<button type="button" class="ml-2 mb-1 btn btn-light btn-sm p-1"/>`)
                         .append($(`<small class="fas fa-trash"/>`)
-                        ).click(() => deleteWingsRun(wingsRun)))));
+                        ).click(() => deleteMentorAssignment(mentorAssignment)))));
 
             // const rowByTeacher = $("<tr>").appendTo(tbodyByTeacher);
             // rowByTeacher
@@ -71,9 +71,7 @@ function refreshTimeTable() {
             //         -
             //         ${moment(timeslot.endTime, "HH:mm:ss").format("HH:mm")}
             //     `)));
-            // $.each(wingSchedule.mentorList, (index, mentor) => {
-            //     rowByMentor.append($("<td/>").prop("id", `wingsRun${wingsRun.id}mentor${mentor.id}`));
-            // });
+            
             // const rowByStudentGroup = $("<tr>").appendTo(tbodyByStudentGroup);
             // rowByStudentGroup
             // .append($(`<th class="align-middle"/>`)
@@ -83,6 +81,10 @@ function refreshTimeTable() {
             //         -
             //         ${moment(timeslot.endTime, "HH:mm:ss").format("HH:mm")}
             //     `)));
+
+            $.each(wingsSchedule.mentorList, (index, mentor) => {
+                rowByMentor.append($("<td/>").prop("id", `mentorAssignment${mentorAssignment.id}mentor${mentor.id}`));
+            });
 
             // $.each(teacherList, (index, teacher) => {
             //     rowByTeacher.append($("<td/>").prop("id", `timeslot${timeslot.id}teacher${convertToId(teacher)}`));
@@ -110,9 +112,9 @@ function refreshTimeTable() {
             if (mentorAssignment.mentor == null) {
                 unassignedLessons.append(lessonElement);
             } else {
-                $(`#wingsRun${mentorAssignment.wingsRun.id}mentor${mentorAssignment.mentor.id}`).append(mentorAssignmentElement);
-                $(`#timeslot${lesson.timeslot.id}teacher${convertToId(lesson.teacher)}`).append(lessonElementWithoutDelete.clone());
-                $(`#timeslot${lesson.timeslot.id}studentGroup${convertToId(lesson.studentGroup)}`).append(lessonElementWithoutDelete.clone());
+                $(`#mentorAssignment${mentorAssignment.id}mentor${mentorAssignment.mentor.id}`).append(mentorAssignmentElement);
+                // $(`#timeslot${lesson.timeslot.id}teacher${convertToId(lesson.teacher)}`).append(lessonElementWithoutDelete.clone());
+                // $(`#timeslot${lesson.timeslot.id}studentGroup${convertToId(lesson.studentGroup)}`).append(lessonElementWithoutDelete.clone());
             }
         });
     });
@@ -146,7 +148,7 @@ function refreshSolvingButtons(solving) {
 }
 
 function autoRefresh() {
-    refreshTimeTable();
+    refreshWingsSchedule();
     autoRefreshCount--;
     if (autoRefreshCount <= 0) {
         clearInterval(autoRefreshIntervalId);
@@ -157,7 +159,7 @@ function autoRefresh() {
 function stopSolving() {
     $.post("/wingsSchedule/stopSolving", function () {
         refreshSolvingButtons(false);
-        refreshTimeTable();
+        refreshWingsSchedule();
     }).fail(function(xhr, ajaxOptions, thrownError) {
         showError("Stop solving failed.", xhr);
     });
@@ -170,7 +172,7 @@ function addLesson() {
         "teacher": $("#lesson_teacher").val().trim(),
         "studentGroup": $("#lesson_studentGroup").val().trim()
     }), function () {
-        refreshTimeTable();
+        refreshWingsSchedule();
     }).fail(function(xhr, ajaxOptions, thrownError) {
         showError("Adding lesson (" + subject + ") failed.", xhr);
     });
@@ -179,7 +181,7 @@ function addLesson() {
 
 function deleteLesson(lesson) {
     $.delete("/lessons/" + lesson.id, function () {
-        refreshTimeTable();
+        refreshWingsSchedule();
     }).fail(function(xhr, ajaxOptions, thrownError) {
         showError("Deleting lesson (" + lesson.name + ") failed.", xhr);
     });
@@ -191,7 +193,7 @@ function addTimeslot() {
         "startTime": $("#timeslot_startTime").val().trim(),
         "endTime": $("#timeslot_endTime").val().trim()
     }), function () {
-        refreshTimeTable();
+        refreshWingsSchedule();
     }).fail(function(xhr, ajaxOptions, thrownError) {
         showError("Adding timeslot failed.", xhr);
     });
@@ -200,7 +202,7 @@ function addTimeslot() {
 
 function deleteTimeslot(timeslot) {
     $.delete("/timeslots/" + timeslot.id, function () {
-        refreshTimeTable();
+        refreshWingsSchedule();
     }).fail(function(xhr, ajaxOptions, thrownError) {
         showError("Deleting timeslot (" + timeslot.name + ") failed.", xhr);
     });
@@ -211,7 +213,7 @@ function addRoom() {
     $.post("/rooms", JSON.stringify({
         "name": name
     }), function () {
-        refreshTimeTable();
+        refreshWingsSchedule();
     }).fail(function(xhr, ajaxOptions, thrownError) {
         showError("Adding room (" + name + ") failed.", xhr);
     });
@@ -220,7 +222,7 @@ function addRoom() {
 
 function deleteRoom(room) {
     $.delete("/rooms/" + room.id, function () {
-        refreshTimeTable();
+        refreshWingsSchedule();
     }).fail(function(xhr, ajaxOptions, thrownError) {
         showError("Deleting room (" + room.name + ") failed.", xhr);
     });
@@ -274,7 +276,7 @@ $(document).ready( function() {
 
 
     $("#refreshButton").click(function() {
-        refreshTimeTable();
+        refreshWingsSchedule();
     });
     $("#solveButton").click(function() {
         solve();
@@ -292,7 +294,7 @@ $(document).ready( function() {
         addRoom();
     });
 
-    refreshTimeTable();
+    refreshWingsSchedule();
 });
 
 // ****************************************************************************
