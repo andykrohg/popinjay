@@ -38,6 +38,14 @@ public class WingsRun extends PanacheEntityBase {
         this.endTime = endTime;
     }
 
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getStudent() {
         return this.student;
     }
@@ -68,6 +76,11 @@ public class WingsRun extends PanacheEntityBase {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public WingsRun id(Long id) {
+        this.id = id;
+        return this;
     }
 
     public WingsRun student(String student) {
