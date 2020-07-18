@@ -2,12 +2,12 @@ var autoRefreshCount = 0;
 var autoRefreshIntervalId = null;
 
 function refreshTimeTable() {
-    $.getJSON("/timeTable", function (timeTable) {
-        refreshSolvingButtons(timeTable.solverStatus != null && timeTable.solverStatus !== "NOT_SOLVING");
-        $("#score").text("Score: "+ (timeTable.score == null ? "?" : timeTable.score));
+    $.getJSON("/wingsSchedule", function (wingsSchedule) {
+        refreshSolvingButtons(wingsSchedule.solverStatus != null && wingsSchedule.solverStatus !== "NOT_SOLVING");
+        $("#score").text("Score: "+ (wingsSchedule.score == null ? "?" : wingsSchedule.score));
 
-        const timeTableByRoom = $("#timeTableByRoom");
-        timeTableByRoom.children().remove();
+        const wingsScheduleByMentor = $("#wingsScheduleByMentor");
+        wingsScheduleByMentor.children().remove();
         const timeTableByTeacher = $("#timeTableByTeacher");
         timeTableByTeacher.children().remove();
         const timeTableByStudentGroup = $("#timeTableByStudentGroup");
@@ -15,103 +15,102 @@ function refreshTimeTable() {
         const unassignedLessons = $("#unassignedLessons");
         unassignedLessons.children().remove();
 
-        const theadByRoom = $("<thead>").appendTo(timeTableByRoom);
-        const headerRowByRoom = $("<tr>").appendTo(theadByRoom);
-        headerRowByRoom.append($("<th>Timeslot</th>"));
-        $.each(timeTable.roomList, (index, room) => {
-            headerRowByRoom
+        const theadByMentor = $("<thead>").appendTo(wingsScheduleByMentor);
+        const headerRowByMentor = $("<tr>").appendTo(theadByMentor);
+        headerRowByMentor.append($("<th>Date & Time</th>"));
+        $.each(wingsSchedule.mentorList, (index, mentor) => {
+            headerRowByMentor
             .append($("<th/>")
-                .append($("<span/>").text(room.name))
+                .append($("<span/>").text(mentor.name))
                 .append($(`<button type="button" class="ml-2 mb-1 btn btn-light btn-sm p-1"/>`)
                         .append($(`<small class="fas fa-trash"/>`)
-                        ).click(() => deleteRoom(room))));
+                        ).click(() => deleteMentor(mentor))));
         });
-        const theadByTeacher = $("<thead>").appendTo(timeTableByTeacher);
-        const headerRowByTeacher = $("<tr>").appendTo(theadByTeacher);
-        headerRowByTeacher.append($("<th>Timeslot</th>"));
-        const teacherList = [...new Set(timeTable.lessonList.map(lesson => lesson.teacher))];
-        $.each(teacherList, (index, teacher) => {
-            headerRowByTeacher
-            .append($("<th/>")
-                .append($("<span/>").text(teacher)));
-        });
-        const theadByStudentGroup = $("<thead>").appendTo(timeTableByStudentGroup);
-        const headerRowByStudentGroup = $("<tr>").appendTo(theadByStudentGroup);
-        headerRowByStudentGroup.append($("<th>Timeslot</th>"));
-        const studentGroupList = [...new Set(timeTable.lessonList.map(lesson => lesson.studentGroup))];
-        $.each(studentGroupList, (index, studentGroup) => {
-            headerRowByStudentGroup
-            .append($("<th/>")
-                .append($("<span/>").text(studentGroup)));
-        });
+        // const theadByTeacher = $("<thead>").appendTo(timeTableByTeacher);
+        // const headerRowByTeacher = $("<tr>").appendTo(theadByTeacher);
+        // headerRowByTeacher.append($("<th>Timeslot</th>"));
+        // const teacherList = [...new Set(timeTable.lessonList.map(lesson => lesson.teacher))];
+        // $.each(teacherList, (index, teacher) => {
+        //     headerRowByTeacher
+        //     .append($("<th/>")
+        //         .append($("<span/>").text(teacher)));
+        // });
+        // const theadByStudentGroup = $("<thead>").appendTo(timeTableByStudentGroup);
+        // const headerRowByStudentGroup = $("<tr>").appendTo(theadByStudentGroup);
+        // headerRowByStudentGroup.append($("<th>Timeslot</th>"));
+        // const studentGroupList = [...new Set(timeTable.lessonList.map(lesson => lesson.studentGroup))];
+        // $.each(studentGroupList, (index, studentGroup) => {
+        //     headerRowByStudentGroup
+        //     .append($("<th/>")
+        //         .append($("<span/>").text(studentGroup)));
+        // });
 
-        const tbodyByRoom = $("<tbody>").appendTo(timeTableByRoom);
+        const tbodyByMentor = $("<tbody>").appendTo(wingsScheduleByMentor);
         const tbodyByTeacher = $("<tbody>").appendTo(timeTableByTeacher);
         const tbodyByStudentGroup = $("<tbody>").appendTo(timeTableByStudentGroup);
-        $.each(timeTable.timeslotList, (index, timeslot) => {
-            const rowByRoom = $("<tr>").appendTo(tbodyByRoom);
-            rowByRoom
+        const wingsRunList = [...new Set(wingsSchedule.mentorAssignments.map(mentorAssignment => mentorAssignment.wingsRun))]
+        $.each(wingsRunList, (index, wingsRun) => {
+            const rowByMentor = $("<tr>").appendTo(tbodyByMentor);
+            rowByMentor
             .append($(`<th class="align-middle"/>`)
                 .append($("<span/>").text(`
-                    ${timeslot.dayOfWeek.charAt(0) + timeslot.dayOfWeek.slice(1).toLowerCase()}
-                    ${moment(timeslot.startTime, "HH:mm:ss").format("HH:mm")}
+                    ${wingsRun.startTime}
                     -
-                    ${moment(timeslot.endTime, "HH:mm:ss").format("HH:mm")}
+                    ${wingsRun.endTime}
                 `)
                 .append($(`<button type="button" class="ml-2 mb-1 btn btn-light btn-sm p-1"/>`)
                         .append($(`<small class="fas fa-trash"/>`)
-                        ).click(() => deleteTimeslot(timeslot)))));
+                        ).click(() => deleteWingsRun(wingsRun)))));
 
-            const rowByTeacher = $("<tr>").appendTo(tbodyByTeacher);
-            rowByTeacher
-            .append($(`<th class="align-middle"/>`)
-                .append($("<span/>").text(`
-                    ${timeslot.dayOfWeek.charAt(0) + timeslot.dayOfWeek.slice(1).toLowerCase()}
-                    ${moment(timeslot.startTime, "HH:mm:ss").format("HH:mm")}
-                    -
-                    ${moment(timeslot.endTime, "HH:mm:ss").format("HH:mm")}
-                `)));
-            $.each(timeTable.roomList, (index, room) => {
-                rowByRoom.append($("<td/>").prop("id", `timeslot${timeslot.id}room${room.id}`));
-            });
-            const rowByStudentGroup = $("<tr>").appendTo(tbodyByStudentGroup);
-            rowByStudentGroup
-            .append($(`<th class="align-middle"/>`)
-                .append($("<span/>").text(`
-                    ${timeslot.dayOfWeek.charAt(0) + timeslot.dayOfWeek.slice(1).toLowerCase()}
-                    ${moment(timeslot.startTime, "HH:mm:ss").format("HH:mm")}
-                    -
-                    ${moment(timeslot.endTime, "HH:mm:ss").format("HH:mm")}
-                `)));
+            // const rowByTeacher = $("<tr>").appendTo(tbodyByTeacher);
+            // rowByTeacher
+            // .append($(`<th class="align-middle"/>`)
+            //     .append($("<span/>").text(`
+            //         ${timeslot.dayOfWeek.charAt(0) + timeslot.dayOfWeek.slice(1).toLowerCase()}
+            //         ${moment(timeslot.startTime, "HH:mm:ss").format("HH:mm")}
+            //         -
+            //         ${moment(timeslot.endTime, "HH:mm:ss").format("HH:mm")}
+            //     `)));
+            // $.each(wingSchedule.mentorList, (index, mentor) => {
+            //     rowByMentor.append($("<td/>").prop("id", `wingsRun${wingsRun.id}mentor${mentor.id}`));
+            // });
+            // const rowByStudentGroup = $("<tr>").appendTo(tbodyByStudentGroup);
+            // rowByStudentGroup
+            // .append($(`<th class="align-middle"/>`)
+            //     .append($("<span/>").text(`
+            //         ${timeslot.dayOfWeek.charAt(0) + timeslot.dayOfWeek.slice(1).toLowerCase()}
+            //         ${moment(timeslot.startTime, "HH:mm:ss").format("HH:mm")}
+            //         -
+            //         ${moment(timeslot.endTime, "HH:mm:ss").format("HH:mm")}
+            //     `)));
 
-            $.each(teacherList, (index, teacher) => {
-                rowByTeacher.append($("<td/>").prop("id", `timeslot${timeslot.id}teacher${convertToId(teacher)}`));
-            });
+            // $.each(teacherList, (index, teacher) => {
+            //     rowByTeacher.append($("<td/>").prop("id", `timeslot${timeslot.id}teacher${convertToId(teacher)}`));
+            // });
 
-            $.each(studentGroupList, (index, studentGroup) => {
-                rowByStudentGroup.append($("<td/>").prop("id", `timeslot${timeslot.id}studentGroup${convertToId(studentGroup)}`));
-            });
+            // $.each(studentGroupList, (index, studentGroup) => {
+            //     rowByStudentGroup.append($("<td/>").prop("id", `timeslot${timeslot.id}studentGroup${convertToId(studentGroup)}`));
+            // });
         });
 
-        $.each(timeTable.lessonList, (index, lesson) => {
-            const color = pickColor(lesson.subject);
-            const lessonElementWithoutDelete = $(`<div class="card lesson" style="background-color: ${color}"/>`)
+        $.each(wingsSchedule.mentorAssignments, (index, mentorAssignment) => {
+            const color = pickColor(mentorAssignment.wingsRun.student);
+            const mentorAssignmentElementWithoutDelete = $(`<div class="card mentorAssignment" style="background-color: ${color}"/>`)
                     .append($(`<div class="card-body p-2"/>`)
-                            .append($(`<h5 class="card-title mb-1"/>`).text(lesson.subject))
+                            .append($(`<h5 class="card-title mb-1"/>`).text(mentorAssignment.wingsRun.type))
                             .append($(`<p class="card-text ml-2 mb-1"/>`)
-                                    .append($(`<em/>`).text(`by ${lesson.teacher}`)))
-                            .append($(`<small class="ml-2 mt-1 card-text text-muted align-bottom float-right"/>`).text(lesson.id))
-                            .append($(`<p class="card-text ml-2"/>`).text(lesson.studentGroup)));
-            const lessonElement = lessonElementWithoutDelete.clone();
-            lessonElement.find(".card-body").prepend(
+                                    .append($(`<em/>`).text(`by ${mentorAssignment.wingsRun.student}`)))
+                            .append($(`<small class="ml-2 mt-1 card-text text-muted align-bottom float-right"/>`).text(mentorAssignment.wingsRun.id)));
+            const mentorAssignmentElement = mentorAssignmentElementWithoutDelete.clone();
+            mentorAssignmentElement.find(".card-body").prepend(
                 $(`<button type="button" class="ml-2 btn btn-light btn-sm p-1 float-right"/>`)
                         .append($(`<small class="fas fa-trash"/>`)
-                        ).click(() => deleteLesson(lesson))
+                        ).click(() => deleteMentorAssignment(mentorAssignment))
             );
-            if (lesson.timeslot == null || lesson.room == null) {
+            if (mentorAssignment.mentor == null) {
                 unassignedLessons.append(lessonElement);
             } else {
-                $(`#timeslot${lesson.timeslot.id}room${lesson.room.id}`).append(lessonElement);
+                $(`#wingsRun${mentorAssignment.wingsRun.id}mentor${mentorAssignment.mentor.id}`).append(mentorAssignmentElement);
                 $(`#timeslot${lesson.timeslot.id}teacher${convertToId(lesson.teacher)}`).append(lessonElementWithoutDelete.clone());
                 $(`#timeslot${lesson.timeslot.id}studentGroup${convertToId(lesson.studentGroup)}`).append(lessonElementWithoutDelete.clone());
             }
@@ -125,7 +124,7 @@ function convertToId(str) {
 }
 
 function solve() {
-    $.post("/timeTable/solve", function () {
+    $.post("/wingsSchedule/solve", function () {
         refreshSolvingButtons(true);
         autoRefreshCount = 16;
         if (autoRefreshIntervalId == null) {
@@ -156,7 +155,7 @@ function autoRefresh() {
 }
 
 function stopSolving() {
-    $.post("/timeTable/stopSolving", function () {
+    $.post("/wingsSchedule/stopSolving", function () {
         refreshSolvingButtons(false);
         refreshTimeTable();
     }).fail(function(xhr, ajaxOptions, thrownError) {

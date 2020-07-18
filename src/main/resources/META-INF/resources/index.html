@@ -2,7 +2,7 @@
 <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
     <meta content="width=device-width, initial-scale=1" name="viewport">
-    <title>OptaPlanner Quarkus example</title>
+    <title>Popinjay - Wings Scheduler</title>
     <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/webjars/font-awesome/5.11.2/css/all.css" />
 </head>
@@ -16,8 +16,8 @@
     <div class="sticky-top d-flex justify-content-center align-items-center" aria-live="polite" aria-atomic="true">
         <div id="notificationPanel" style="position: absolute; top: .5rem;"></div>
     </div>
-    <h1>High school time table solver</h1>
-    <p>Generate the optimal schedule for your teachers and students.</p>
+    <h1>Popinjay</h1>
+    <p>Schedule Wings Runs</p>
 
     <div style="margin-bottom: .5rem">
         <button id="refreshButton" type="button" class="btn btn-secondary">
@@ -35,7 +35,7 @@
         <div class="float-right">
             <ul class="nav nav-pills" id="myTab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" id="byRoomTab" data-toggle="tab" href="#byRoomPanel" role="tab" aria-controls="byRoomPanel" aria-selected="true">By room</a>
+                    <a class="nav-link active" id="byMentorTab" data-toggle="tab" href="#byMentorPanel" role="tab" aria-controls="byMentorPanel" aria-selected="true">By Mentor</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="byTeacherTab" data-toggle="tab" href="#byTeacher" role="tab" aria-controls="byTeacher" aria-selected="false">By teacher</a>
@@ -47,8 +47,8 @@
         </div>
     </div>
     <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="byRoomPanel" role="tabpanel" aria-labelledby="byRoomTab">
-            <table class="table table-borderless table-striped timeTableSolution" id="timeTableByRoom">
+        <div class="tab-pane fade show active" id="byMentorPanel" role="tabpanel" aria-labelledby="byMentorTab">
+            <table class="table table-borderless table-striped wingsScheduleSolution" id="wingsScheduleByMentor">
                 <!-- Filled in by app.js -->
             </table>
         </div>

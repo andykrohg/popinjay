@@ -100,5 +100,18 @@ public class Mentor extends PanacheEntityBase {
             "}";
     }
 
+    public Mentor id(Long id) {
+        this.id = id;
+        return this;
+    }
+
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     
 }
