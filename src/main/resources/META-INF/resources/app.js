@@ -48,52 +48,82 @@ function refreshWingsSchedule() {
         const tbodyByMentor = $("<tbody>").appendTo(wingsScheduleByMentor);
         const tbodyByTeacher = $("<tbody>").appendTo(timeTableByTeacher);
         const tbodyByStudentGroup = $("<tbody>").appendTo(timeTableByStudentGroup);
-        // const wingsRunList = [...new Set(wingsSchedule.mentorAssignments.map(mentorAssignment => mentorAssignment.wingsRun))]
-        $.each(wingsSchedule.mentorAssignments, (index, mentorAssignment) => {
+        const wingsRunList = [...new Set(wingsSchedule.mentorAssignments.map(mentorAssignment => mentorAssignment.wingsRun))];
+        
+        //
+        //
+        //
+
+        $.each(wingsSchedule.timeslotList, (index, timeslot) => {
             const rowByMentor = $("<tr>").appendTo(tbodyByMentor);
             rowByMentor
             .append($(`<th class="align-middle"/>`)
                 .append($("<span/>").text(`
-                    ${mentorAssignment.wingsRun.startTime}
+                    ${timeslot.dayOfWeek.charAt(0) + timeslot.dayOfWeek.slice(1).toLowerCase()}
+                    ${moment(timeslot.startTime, "HH:mm:ss").format("HH:mm")}
                     -
-                    ${mentorAssignment.wingsRun.endTime}
+                    ${moment(timeslot.endTime, "HH:mm:ss").format("HH:mm")}
                 `)
                 .append($(`<button type="button" class="ml-2 mb-1 btn btn-light btn-sm p-1"/>`)
                         .append($(`<small class="fas fa-trash"/>`)
-                        ).click(() => deleteMentorAssignment(mentorAssignment)))));
+                        ).click(() => deleteTimeslot(timeslot)))));
 
-            // const rowByTeacher = $("<tr>").appendTo(tbodyByTeacher);
-            // rowByTeacher
-            // .append($(`<th class="align-middle"/>`)
-            //     .append($("<span/>").text(`
-            //         ${timeslot.dayOfWeek.charAt(0) + timeslot.dayOfWeek.slice(1).toLowerCase()}
-            //         ${moment(timeslot.startTime, "HH:mm:ss").format("HH:mm")}
-            //         -
-            //         ${moment(timeslot.endTime, "HH:mm:ss").format("HH:mm")}
-            //     `)));
             
-            // const rowByStudentGroup = $("<tr>").appendTo(tbodyByStudentGroup);
-            // rowByStudentGroup
-            // .append($(`<th class="align-middle"/>`)
-            //     .append($("<span/>").text(`
-            //         ${timeslot.dayOfWeek.charAt(0) + timeslot.dayOfWeek.slice(1).toLowerCase()}
-            //         ${moment(timeslot.startTime, "HH:mm:ss").format("HH:mm")}
-            //         -
-            //         ${moment(timeslot.endTime, "HH:mm:ss").format("HH:mm")}
-            //     `)));
-
             $.each(wingsSchedule.mentorList, (index, mentor) => {
-                rowByMentor.append($("<td/>").prop("id", `mentorAssignment${mentorAssignment.id}mentor${mentor.id}`));
+                rowByMentor.append($("<td/>").prop("id", `timeslot${timeslot.id}mentor${mentor.id}`));
             });
-
-            // $.each(teacherList, (index, teacher) => {
-            //     rowByTeacher.append($("<td/>").prop("id", `timeslot${timeslot.id}teacher${convertToId(teacher)}`));
-            // });
-
-            // $.each(studentGroupList, (index, studentGroup) => {
-            //     rowByStudentGroup.append($("<td/>").prop("id", `timeslot${timeslot.id}studentGroup${convertToId(studentGroup)}`));
-            // });
         });
+
+        //
+        //
+        ///
+        
+        
+        // $.each(wingsRunList, (index, wingsRun) => {
+        //     const rowByMentor = $("<tr>").appendTo(tbodyByMentor);
+        //     rowByMentor
+        //     .append($(`<th class="align-middle"/>`)
+        //         .append($("<span/>").text(`
+        //             ${wingsRun.startTime}
+        //             -
+        //             ${wingsRun.endTime}
+        //         `)
+        //         .append($(`<button type="button" class="ml-2 mb-1 btn btn-light btn-sm p-1"/>`)
+        //                 .append($(`<small class="fas fa-trash"/>`)
+        //                 ).click(() => deleteWingsRun(WingsRun)))));
+
+        //     // const rowByTeacher = $("<tr>").appendTo(tbodyByTeacher);
+        //     // rowByTeacher
+        //     // .append($(`<th class="align-middle"/>`)
+        //     //     .append($("<span/>").text(`
+        //     //         ${timeslot.dayOfWeek.charAt(0) + timeslot.dayOfWeek.slice(1).toLowerCase()}
+        //     //         ${moment(timeslot.startTime, "HH:mm:ss").format("HH:mm")}
+        //     //         -
+        //     //         ${moment(timeslot.endTime, "HH:mm:ss").format("HH:mm")}
+        //     //     `)));
+            
+        //     // const rowByStudentGroup = $("<tr>").appendTo(tbodyByStudentGroup);
+        //     // rowByStudentGroup
+        //     // .append($(`<th class="align-middle"/>`)
+        //     //     .append($("<span/>").text(`
+        //     //         ${timeslot.dayOfWeek.charAt(0) + timeslot.dayOfWeek.slice(1).toLowerCase()}
+        //     //         ${moment(timeslot.startTime, "HH:mm:ss").format("HH:mm")}
+        //     //         -
+        //     //         ${moment(timeslot.endTime, "HH:mm:ss").format("HH:mm")}
+        //     //     `)));
+
+        //     $.each(wingsSchedule.mentorList, (index, mentor) => {
+        //         rowByMentor.append($("<td/>").prop("id", `wingsRun${wingsRun.id}mentor${mentor.id}`));
+        //     });
+
+        //     // $.each(teacherList, (index, teacher) => {
+        //     //     rowByTeacher.append($("<td/>").prop("id", `timeslot${timeslot.id}teacher${convertToId(teacher)}`));
+        //     // });
+
+        //     // $.each(studentGroupList, (index, studentGroup) => {
+        //     //     rowByStudentGroup.append($("<td/>").prop("id", `timeslot${timeslot.id}studentGroup${convertToId(studentGroup)}`));
+        //     // });
+        // });
 
         $.each(wingsSchedule.mentorAssignments, (index, mentorAssignment) => {
             const color = pickColor(mentorAssignment.wingsRun.student);
@@ -110,9 +140,9 @@ function refreshWingsSchedule() {
                         ).click(() => deleteMentorAssignment(mentorAssignment))
             );
             if (mentorAssignment.mentor == null) {
-                unassignedLessons.append(lessonElement);
+                // unassignedLessons.append(lessonElement);
             } else {
-                $(`#mentorAssignment${mentorAssignment.id}mentor${mentorAssignment.mentor.id}`).append(mentorAssignmentElement);
+                $(`#timeslot${mentorAssignment.timeslot.id}mentor${mentorAssignment.mentor.id}`).append(mentorAssignmentElement);
                 // $(`#timeslot${lesson.timeslot.id}teacher${convertToId(lesson.teacher)}`).append(lessonElementWithoutDelete.clone());
                 // $(`#timeslot${lesson.timeslot.id}studentGroup${convertToId(lesson.studentGroup)}`).append(lessonElementWithoutDelete.clone());
             }
@@ -128,7 +158,7 @@ function convertToId(str) {
 function solve() {
     $.post("/wingsSchedule/solve", function () {
         refreshSolvingButtons(true);
-        autoRefreshCount = 16;
+        autoRefreshCount =60;
         if (autoRefreshIntervalId == null) {
             autoRefreshIntervalId = setInterval(autoRefresh, 2000);
         }
@@ -148,6 +178,7 @@ function refreshSolvingButtons(solving) {
 }
 
 function autoRefresh() {
+    console.log("refresh");
     refreshWingsSchedule();
     autoRefreshCount--;
     if (autoRefreshCount <= 0) {

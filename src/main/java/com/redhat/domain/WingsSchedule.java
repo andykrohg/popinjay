@@ -17,6 +17,10 @@ public class WingsSchedule {
     @ValueRangeProvider(id = "mentorRange")
     private List<Mentor> mentorList;
 
+    @ProblemFactCollectionProperty
+    @ValueRangeProvider(id = "timeslotRange")
+    private List<Timeslot> timeslotList;
+
     @PlanningEntityCollectionProperty
     private List<MentorAssignment> mentorAssignments;
 
@@ -28,8 +32,9 @@ public class WingsSchedule {
     public WingsSchedule() {
     }
 
-    public WingsSchedule(List<Mentor> mentorList, List<MentorAssignment> mentorAssignments) {
+    public WingsSchedule(List<Mentor> mentorList, List<Timeslot> timeslotList, List<MentorAssignment> mentorAssignments) {
         this.mentorList = mentorList;
+        this.timeslotList = timeslotList;
         this.mentorAssignments = mentorAssignments;
     }
 
@@ -105,4 +110,11 @@ public class WingsSchedule {
         this.solverStatus = solverStatus;
     }
 
+    public List<Timeslot> getTimeslotList() {
+        return this.timeslotList;
+    }
+
+    public void setTimeslotList(List<Timeslot> timeslotList) {
+        this.timeslotList = timeslotList;
+    }
 }

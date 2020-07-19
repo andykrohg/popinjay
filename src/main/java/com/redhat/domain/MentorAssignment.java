@@ -33,6 +33,10 @@ public class MentorAssignment extends PanacheEntityBase {
     @ManyToOne
     private Mentor mentor;
 
+    @PlanningVariable(valueRangeProviderRefs = "timeslotRange")
+    @ManyToOne
+    private Timeslot timeslot;
+
 
     public MentorAssignment() {
     }
@@ -74,6 +78,14 @@ public class MentorAssignment extends PanacheEntityBase {
         this.mentor = mentor;
     }
 
+    public Timeslot getTimeslot() {
+        return this.timeslot;
+    }
+
+    public void setTimeslot(Timeslot timeslot) {
+        this.timeslot = timeslot;
+    }
+
     public MentorAssignment id(Long id) {
         this.id = id;
         return this;
@@ -94,6 +106,11 @@ public class MentorAssignment extends PanacheEntityBase {
         return this;
     }
 
+    public MentorAssignment timeslot(Timeslot timeslot) {
+        this.timeslot = timeslot;
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this)
@@ -102,12 +119,12 @@ public class MentorAssignment extends PanacheEntityBase {
             return false;
         }
         MentorAssignment mentorAssignment = (MentorAssignment) o;
-        return Objects.equals(id, mentorAssignment.id) && Objects.equals(wingsRun, mentorAssignment.wingsRun) && assignmentIndex == mentorAssignment.assignmentIndex && Objects.equals(mentor, mentorAssignment.mentor);
+        return Objects.equals(id, mentorAssignment.id) && Objects.equals(wingsRun, mentorAssignment.wingsRun) && assignmentIndex == mentorAssignment.assignmentIndex && Objects.equals(mentor, mentorAssignment.mentor) && Objects.equals(timeslot, mentorAssignment.timeslot);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, wingsRun, assignmentIndex, mentor);
+        return Objects.hash(id, wingsRun, assignmentIndex, mentor, timeslot);
     }
 
     @Override
@@ -117,6 +134,7 @@ public class MentorAssignment extends PanacheEntityBase {
             ", wingsRun='" + getWingsRun() + "'" +
             ", assignmentIndex='" + getAssignmentIndex() + "'" +
             ", mentor='" + getMentor() + "'" +
+            ", timeslot='" + getTimeslot() + "'" +
             "}";
     }
 

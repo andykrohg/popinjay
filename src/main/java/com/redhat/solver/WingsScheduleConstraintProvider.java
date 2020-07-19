@@ -2,6 +2,7 @@ package com.redhat.solver;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.DayOfWeek;
 
 import com.google.common.base.Objects;
 import com.redhat.calendar.GoogleCalendarIntegration;
@@ -12,6 +13,7 @@ import org.optaplanner.core.api.score.stream.Constraint;
 import org.optaplanner.core.api.score.stream.ConstraintCollectors;
 import org.optaplanner.core.api.score.stream.ConstraintFactory;
 import org.optaplanner.core.api.score.stream.ConstraintProvider;
+import org.optaplanner.core.api.score.stream.Joiners;
 
 public class WingsScheduleConstraintProvider implements ConstraintProvider {
     public static final int MAX_ASSIGNMENTS = 5;
@@ -20,8 +22,9 @@ public class WingsScheduleConstraintProvider implements ConstraintProvider {
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[] {
                 // Hard constraints
+                timeslotConflict(constraintFactory),
+                multipleAssignmentsInTimeslotConflict(constraintFactory),
                 calendarConflict(constraintFactory),
-                sameRunConflict(constraintFactory),
                 mentorAffinity(constraintFactory),
                 mentorPairing(constraintFactory),
                 maxAssignmentsPerWeek(constraintFactory)
@@ -34,7 +37,7 @@ public class WingsScheduleConstraintProvider implements ConstraintProvider {
             try {
                 return GoogleCalendarIntegration.getScheduleByUsername(mentorAssignment.getMentor().getName())
                         .parallelStream().anyMatch(event -> {
-                            return false;
+                            return mentorAssignment.getMentor().getName().equals("erchen");
                         });
             } catch (IOException | GeneralSecurityException e) {
                 // TODO Auto-generated catch block
@@ -44,14 +47,25 @@ public class WingsScheduleConstraintProvider implements ConstraintProvider {
         }).penalize("Mentor is unavailable for the requested timeslot", HardMediumSoftScore.ONE_HARD);
     }
 
-    private Constraint sameRunConflict(ConstraintFactory constraintFactory) {
-        return constraintFactory.fromUniquePair(MentorAssignment.class)
-            .filter((assignment1, assignment2)-> {
-                return Objects.equal(assignment1.getMentor(), assignment2.getMentor())
-                    && Objects.equal(assignment1.getWingsRun(), assignment2.getWingsRun());
-                
+    private Constraint multipleAssignmentsInTimeslotConflict(ConstraintFactory constraintFactory) {
+        return constraintFactory.from(MentorAssignment.class)
+            .join(MentorAssignment.class,
+                Joiners.equal(MentorAssignment::getMentor),
+                Joiners.equal(MentorAssignment::getTimeslot),
+                Joiners.lessThan(MentorAssignment::getId))
+            .penalize("A mentor cannot have multiple assignments in the same timeslot.", HardMediumSoftScore.ONE_HARD);
+    }
+
+    private Constraint timeslotConflict(ConstraintFactory constraintFactory) {
+        return constraintFactory.from(MentorAssignment.class)
+            .join(MentorAssignment.class,
+                Joiners.equal(MentorAssignment::getWingsRun),
+                Joiners.lessThan(MentorAssignment::getId)
+            )
+            .filter((assignment1, assignment2) -> {
+                return ! Objects.equal(assignment1.getTimeslot(), assignment2.getTimeslot());
             })
-            .penalize("A mentor cannot have multiple assignments on the same wings run.", HardMediumSoftScore.ONE_HARD);
+            .penalize("Mentor assignments for the same wings run must fall in the same time slot", HardMediumSoftScore.ONE_HARD);
     }
 
     // MEDIUM CONSTRAINTS

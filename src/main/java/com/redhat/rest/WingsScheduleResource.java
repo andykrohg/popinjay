@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 
 import com.redhat.domain.Mentor;
 import com.redhat.domain.MentorAssignment;
+import com.redhat.domain.Timeslot;
 import com.redhat.domain.WingsSchedule;
 
 import org.optaplanner.core.api.score.ScoreManager;
@@ -68,6 +69,7 @@ public class WingsScheduleResource {
         // that is contained by the timeTable's timeslotList/roomList.
         return new WingsSchedule(
                 Mentor.listAll(),
+                Timeslot.listAll(),
                 MentorAssignment.listAll());
     }
 
@@ -77,6 +79,7 @@ public class WingsScheduleResource {
             // TODO this is awfully naive: optimistic locking causes issues if called by the SolverManager
             MentorAssignment attachedMentorAssignment = MentorAssignment.findById(mentorAssignment.getId());
             attachedMentorAssignment.setMentor(mentorAssignment.getMentor());
+            attachedMentorAssignment.setTimeslot(mentorAssignment.getTimeslot());
         }
     }
 

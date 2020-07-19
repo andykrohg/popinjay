@@ -1,6 +1,5 @@
 package com.redhat.domain;
 
-import java.util.Date;
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -24,18 +23,13 @@ public class WingsRun extends PanacheEntityBase {
 
     private String student;
     private Type type;
-    private Date startTime;
-    private Date endTime;
-
 
     public WingsRun() {
     }
 
-    public WingsRun(String student, Type type, Date startTime, Date endTime) {
+    public WingsRun(String student, Type type) {
         this.student = student;
         this.type = type;
-        this.startTime = startTime;
-        this.endTime = endTime;
     }
 
     public Long getId() {
@@ -62,22 +56,6 @@ public class WingsRun extends PanacheEntityBase {
         this.type = type;
     }
 
-    public Date getStartTime() {
-        return this.startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    public Date getEndTime() {
-        return this.endTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
-    }
-
     public WingsRun id(Long id) {
         this.id = id;
         return this;
@@ -93,16 +71,6 @@ public class WingsRun extends PanacheEntityBase {
         return this;
     }
 
-    public WingsRun startTime(Date startTime) {
-        this.startTime = startTime;
-        return this;
-    }
-
-    public WingsRun endTime(Date endTime) {
-        this.endTime = endTime;
-        return this;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (o == this)
@@ -111,26 +79,21 @@ public class WingsRun extends PanacheEntityBase {
             return false;
         }
         WingsRun wingsRun = (WingsRun) o;
-        return Objects.equals(student, wingsRun.student) && Objects.equals(type, wingsRun.type) && Objects.equals(startTime, wingsRun.startTime) && Objects.equals(endTime, wingsRun.endTime);
+        return Objects.equals(student, wingsRun.student) && Objects.equals(type, wingsRun.type);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(student, type, startTime, endTime);
+        return Objects.hash(student, type);
     }
 
     @Override
     public String toString() {
-        return "{" +
-            " student='" + getStudent() + "'" +
-            ", type='" + getType() + "'" +
-            ", startTime='" + getStartTime() + "'" +
-            ", endTime='" + getEndTime() + "'" +
-            "}";
+        return "{" + " student='" + getStudent() + "'" + ", type='" + getType() + "'" + "}";
     }
 
     public enum Type {
         MIDDLEWARE_OVERVIEW, DEEP_DIVE, FULL_RUN
     }
-    
+
 }
