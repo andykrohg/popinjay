@@ -2,7 +2,6 @@ package com.redhat.solver;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.time.DayOfWeek;
 
 import com.google.common.base.Objects;
 import com.redhat.calendar.GoogleCalendarIntegration;
@@ -60,12 +59,12 @@ public class WingsScheduleConstraintProvider implements ConstraintProvider {
         return constraintFactory.from(MentorAssignment.class)
             .join(MentorAssignment.class,
                 Joiners.equal(MentorAssignment::getWingsRun),
-                Joiners.lessThan(MentorAssignment::getId)
+                Joiners.lessThan(MentorAssignment::getId),
+                Joiners.filtering((assignment1, assignment2) -> {
+                    return ! Objects.equal(assignment1.getTimeslot(), assignment2.getTimeslot());
+                })
             )
-            .filter((assignment1, assignment2) -> {
-                return ! Objects.equal(assignment1.getTimeslot(), assignment2.getTimeslot());
-            })
-            .penalize("Mentor assignments for the same wings run must fall in the same time slot", HardMediumSoftScore.ONE_HARD);
+            .penalize("Mentor assignments for the same wings run must fall in the same timeslot", HardMediumSoftScore.ONE_HARD);
     }
 
     // MEDIUM CONSTRAINTS

@@ -1,19 +1,19 @@
-# Quarkus demo: OptaPlanner AI with Hibernate ORM and RESTEasy
+# Popinjay: OptaPlanner AI with Hibernate ORM and RESTEasy
 
 This project contains a [Quarkus](https://quarkus.io/) application
 with [OptaPlanner](https://www.optaplanner.org/)'s constraint solving Artificial Intelligence (AI)
 integrated with a database and exposed through a REST API.
 
-This web application optimizes a school timetable for students and teachers.
-It assigns `Lesson` instances to `Timeslot` and `Room` instances automatically
+This web application optimizes a wings schedule for students and mentors.
+It assigns `MentorAssignment` instances to `Timeslot` and `Mentor` instances automatically
 by using AI to adhere to hard and soft scheduling constraints, such as:
 
-* *Room conflict*: A room can have at most one lesson at the same time.
-* *Teacher conflict*: A teacher can teach at most one lesson at the same time.
-* *Student group conflict*: A student can attend at most one lesson at the same time.
-* *Teacher room stability*: A teacher prefers to teach in a single room.
-* *Teacher time efficiency*: A teacher prefers to teach sequential lessons and dislikes gaps between lessons.
-* *Student group subject variety*: A student group dislikes sequential lessons on the same subject.
+* *Calendar conflict*: Mentor is unavailable for the requested timeslot (Google calendar integration).
+* *Mentor conflict*: A mentor cannot have multiple assignments in the same timeslot.
+* *Mentor pairing constraint*:  Prefer to pair mentors with their mentees.
+* *Max assignments*: Prefer mentors not to have more than [5] assignments per week.
+* *Mentor affinity*: Prefer assignments to more actively engaged mentors.
+
 
 ## Run the application with live coding
 
@@ -85,5 +85,5 @@ Compiling a native executable takes a bit of time,
 After getting a cup of coffee, run this binary directly:
 
 ```
-./target/optaplanner-quickstart-1.0-SNAPSHOT-runner
+./target/popinjay-1.0-SNAPSHOT-runner
 ```

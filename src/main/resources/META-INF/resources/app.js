@@ -158,7 +158,7 @@ function convertToId(str) {
 function solve() {
     $.post("/wingsSchedule/solve", function () {
         refreshSolvingButtons(true);
-        autoRefreshCount =60;
+        autoRefreshCount = 60;
         if (autoRefreshIntervalId == null) {
             autoRefreshIntervalId = setInterval(autoRefresh, 2000);
         }
