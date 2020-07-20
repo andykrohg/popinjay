@@ -5,10 +5,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -25,8 +28,12 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
+import com.redhat.domain.Mentor;
 
 public class GoogleCalendarIntegration {
+    public static Map<String, List<Event>> schedules = new HashMap<String, List<Event>>();
+    public static LocalDate startDate;
+
     private static final String APPLICATION_NAME = "Google Calendar Integration";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
@@ -62,22 +69,36 @@ public class GoogleCalendarIntegration {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
 
-    public static List<Event> getScheduleByUsername(String username) throws IOException, GeneralSecurityException {
+    private static List<Event> getScheduleByUsername(String username) throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Calendar service = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                 .setApplicationName(APPLICATION_NAME)
                 .build();
 
-        // List events for the next 5 days
-        DateTime now = new DateTime(System.currentTimeMillis());
         Events events = service.events().list(username + "@redhat.com")
-                .setTimeMin(now)
-                .setTimeMax(new DateTime(LocalDateTime.now().plusDays(5).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()))
+                .setTimeMin(new DateTime(startDate.atTime(9,0).atZone(ZoneId.systemDefault()).toEpochSecond() * 1000))
+                .setTimeMax(new DateTime(startDate.atTime(17,0).plusDays(4).atZone(ZoneId.systemDefault()).toEpochSecond() * 1000))
                 .setOrderBy("startTime")
                 .setSingleEvents(true)
                 .execute();
 
         return events.getItems();
     } 
+
+    public static void updateSchedules() {
+        startDate = LocalDate.now().minusDays(LocalDate.now().getDayOfWeek().getValue() - 1);
+        System.out.println(startDate);
+
+        Mentor.streamAll().map(mentor -> (Mentor) mentor).forEach(mentor -> {
+            try {
+                System.out.println("Updating schedule for " + mentor.getName());
+                List<Event> mentorSchedule = getScheduleByUsername(mentor.getName());
+                schedules.put(mentor.getName(), mentorSchedule);
+            } catch (IOException | GeneralSecurityException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        });
+    }
 }

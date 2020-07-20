@@ -1,8 +1,12 @@
 package com.redhat.solver;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
+import com.google.api.client.util.DateTime;
+import com.google.api.services.calendar.model.Event;
 import com.google.common.base.Objects;
 import com.redhat.calendar.GoogleCalendarIntegration;
 import com.redhat.domain.MentorAssignment;
@@ -21,9 +25,9 @@ public class WingsScheduleConstraintProvider implements ConstraintProvider {
     public Constraint[] defineConstraints(ConstraintFactory constraintFactory) {
         return new Constraint[] {
                 // Hard constraints
+                calendarConflict(constraintFactory),
                 timeslotConflict(constraintFactory),
                 multipleAssignmentsInTimeslotConflict(constraintFactory),
-                calendarConflict(constraintFactory),
                 mentorAffinity(constraintFactory),
                 mentorPairing(constraintFactory),
                 maxAssignmentsPerWeek(constraintFactory)
@@ -33,17 +37,13 @@ public class WingsScheduleConstraintProvider implements ConstraintProvider {
     // HARD CONSTRAINTS
     private Constraint calendarConflict(ConstraintFactory constraintFactory) {
         return constraintFactory.from(MentorAssignment.class).filter(mentorAssignment -> {
-            try {
-                return GoogleCalendarIntegration.getScheduleByUsername(mentorAssignment.getMentor().getName())
-                        .parallelStream().anyMatch(event -> {
-                            return mentorAssignment.getMentor().getName().equals("erchen");
-                        });
-            } catch (IOException | GeneralSecurityException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                return true;
-            }
-        }).penalize("Mentor is unavailable for the requested timeslot", HardMediumSoftScore.ONE_HARD);
+                LocalDate timeslotDate = GoogleCalendarIntegration.startDate.plusDays(mentorAssignment.getTimeslot().getDayOfWeek().getValue() - 1);
+                LocalDateTime timeslotStart = mentorAssignment.getTimeslot().getStartTime().atDate(timeslotDate);
+                LocalDateTime timeslotEnd = mentorAssignment.getTimeslot().getEndTime().atDate(timeslotDate);
+
+                return doesConflictExist(timeslotStart, timeslotEnd, GoogleCalendarIntegration.schedules.get(mentorAssignment.getMentor().getName()));
+            })
+        .penalize("Mentor is unavailable for the requested timeslot", HardMediumSoftScore.ONE_HARD);
     }
 
     private Constraint multipleAssignmentsInTimeslotConflict(ConstraintFactory constraintFactory) {
@@ -91,5 +91,23 @@ public class WingsScheduleConstraintProvider implements ConstraintProvider {
         return constraintFactory.from(MentorAssignment.class).impact(
                 "Prefer assignments to more actively engaged mentors", HardMediumSoftScore.ONE_SOFT,
                 mentorAssignment -> mentorAssignment.getMentor().getAffinity());
+    }
+
+    private boolean doesConflictExist(LocalDateTime timeslotStart, LocalDateTime timeslotEnd, List<Event> schedule) {
+        return schedule.stream().anyMatch(event -> {
+            LocalDateTime eventStart;
+            LocalDateTime eventEnd;
+            if (event.getStart().getDateTime() != null) {
+                eventStart = LocalDateTime.parse(event.getStart().getDateTime().toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+                eventEnd = LocalDateTime.parse(event.getEnd().getDateTime().toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+
+            } else {
+                eventStart = LocalDate.parse(event.getStart().getDate().toString()).atStartOfDay();
+                eventEnd = LocalDate.parse(event.getEnd().getDate().toString()).plusDays(1).atStartOfDay();
+            }
+            
+
+            return timeslotEnd.compareTo(eventStart) >= 0 && timeslotStart.compareTo(eventEnd) <= 0;
+        });
     }
 }

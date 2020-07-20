@@ -9,6 +9,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import com.redhat.calendar.GoogleCalendarIntegration;
 import com.redhat.domain.Mentor;
 import com.redhat.domain.MentorAssignment;
 import com.redhat.domain.Timeslot;
@@ -45,6 +46,8 @@ public class WingsScheduleResource {
     @POST
     @Path("/solve")
     public void solve() {
+        GoogleCalendarIntegration.updateSchedules();
+        
         solverManager.solveAndListen(SINGLETON_WINGS_SCHEDULE_ID,
                 this::findById,
                 this::save);

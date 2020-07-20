@@ -12,8 +12,8 @@ function refreshWingsSchedule() {
         timeTableByTeacher.children().remove();
         const timeTableByStudentGroup = $("#timeTableByStudentGroup");
         timeTableByStudentGroup.children().remove();
-        const unassignedLessons = $("#unassignedLessons");
-        unassignedLessons.children().remove();
+        const pendingAssignments = $("#pendingAssignments");
+        pendingAssignments.children().remove();
 
         const theadByMentor = $("<thead>").appendTo(wingsScheduleByMentor);
         const headerRowByMentor = $("<tr>").appendTo(theadByMentor);
@@ -140,7 +140,7 @@ function refreshWingsSchedule() {
                         ).click(() => deleteMentorAssignment(mentorAssignment))
             );
             if (mentorAssignment.mentor == null) {
-                // unassignedLessons.append(lessonElement);
+                pendingAssignments.append(mentorAssignmentElement);
             } else {
                 $(`#timeslot${mentorAssignment.timeslot.id}mentor${mentorAssignment.mentor.id}`).append(mentorAssignmentElement);
                 // $(`#timeslot${lesson.timeslot.id}teacher${convertToId(lesson.teacher)}`).append(lessonElementWithoutDelete.clone());
