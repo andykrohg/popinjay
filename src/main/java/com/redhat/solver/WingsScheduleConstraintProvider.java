@@ -41,9 +41,10 @@ public class WingsScheduleConstraintProvider implements ConstraintProvider {
                 LocalDateTime timeslotStart = mentorAssignment.getTimeslot().getStartTime().atDate(timeslotDate);
                 LocalDateTime timeslotEnd = mentorAssignment.getTimeslot().getEndTime().atDate(timeslotDate);
 
-                return doesConflictExist(timeslotStart, timeslotEnd, GoogleCalendarIntegration.schedules.get(mentorAssignment.getMentor().getName()));
+                return doesConflictExist(timeslotStart, timeslotEnd, GoogleCalendarIntegration.schedules.get(mentorAssignment.getMentor().getName()))
+                    || doesConflictExist(timeslotStart, timeslotEnd, GoogleCalendarIntegration.schedules.get(mentorAssignment.getWingsRun().getStudent()));
             })
-        .penalize("Mentor is unavailable for the requested timeslot", HardMediumSoftScore.ONE_HARD);
+        .penalize("Participant is unavailable for the requested timeslot", HardMediumSoftScore.ONE_HARD);
     }
 
     private Constraint multipleAssignmentsInTimeslotConflict(ConstraintFactory constraintFactory) {

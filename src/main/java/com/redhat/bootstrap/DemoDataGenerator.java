@@ -55,6 +55,8 @@ public class DemoDataGenerator {
         mentorList.add(new Mentor("erchen", 6, null));
         mentorList.add(new Mentor("akrohg", 5, "rcabrera"));
         mentorList.add(new Mentor("enham", 4, null));
+        mentorList.add(new Mentor("afouladi", 4, null));
+        mentorList.add(new Mentor("rcabrera", 4, null));
         
 
         Mentor.persist(mentorList);

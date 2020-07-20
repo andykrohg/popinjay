@@ -46,7 +46,7 @@ public class WingsScheduleResource {
     @POST
     @Path("/solve")
     public void solve() {
-        GoogleCalendarIntegration.updateSchedules();
+        GoogleCalendarIntegration.fetchSchedules();
         
         solverManager.solveAndListen(SINGLETON_WINGS_SCHEDULE_ID,
                 this::findById,

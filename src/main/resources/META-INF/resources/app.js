@@ -1,10 +1,18 @@
 var autoRefreshCount = 0;
 var autoRefreshIntervalId = null;
 
+function getStartDate() {
+    $.getJSON("/startDate", function (startDate) {
+        $("#startDate").text(`Week Beginning ${startDate[1]}/${startDate[2]}`)
+    })
+}
+
 function refreshWingsSchedule() {
     $.getJSON("/wingsSchedule", function (wingsSchedule) {
         refreshSolvingButtons(wingsSchedule.solverStatus != null && wingsSchedule.solverStatus !== "NOT_SOLVING");
         $("#score").text("Score: "+ (wingsSchedule.score == null ? "?" : wingsSchedule.score));
+
+        console.log(startDate);
 
         const wingsScheduleByMentor = $("#wingsScheduleByMentor");
         wingsScheduleByMentor.children().remove();
@@ -17,7 +25,7 @@ function refreshWingsSchedule() {
 
         const theadByMentor = $("<thead>").appendTo(wingsScheduleByMentor);
         const headerRowByMentor = $("<tr>").appendTo(theadByMentor);
-        headerRowByMentor.append($("<th>Date & Time</th>"));
+        headerRowByMentor.append($("<th>Timeslot</th>"));
         $.each(wingsSchedule.mentorList, (index, mentor) => {
             headerRowByMentor
             .append($("<th/>")
@@ -60,9 +68,9 @@ function refreshWingsSchedule() {
             .append($(`<th class="align-middle"/>`)
                 .append($("<span/>").text(`
                     ${timeslot.dayOfWeek.charAt(0) + timeslot.dayOfWeek.slice(1).toLowerCase()}
-                    ${moment(timeslot.startTime, "HH:mm:ss").format("HH:mm")}
+                    ${moment(timeslot.startTime, "HH:mm:ss").format("h:mm a")}
                     -
-                    ${moment(timeslot.endTime, "HH:mm:ss").format("HH:mm")}
+                    ${moment(timeslot.endTime, "HH:mm:ss").format("h:mm a")}
                 `)
                 .append($(`<button type="button" class="ml-2 mb-1 btn btn-light btn-sm p-1"/>`)
                         .append($(`<small class="fas fa-trash"/>`)
@@ -178,7 +186,6 @@ function refreshSolvingButtons(solving) {
 }
 
 function autoRefresh() {
-    console.log("refresh");
     refreshWingsSchedule();
     autoRefreshCount--;
     if (autoRefreshCount <= 0) {
@@ -326,6 +333,7 @@ $(document).ready( function() {
     });
 
     refreshWingsSchedule();
+    getStartDate();
 });
 
 // ****************************************************************************
