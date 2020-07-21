@@ -28,7 +28,7 @@ function refreshWingsSchedule() {
         headerRowByMentor.append($("<th>Timeslot</th>"));
         $.each(wingsSchedule.mentorList, (index, mentor) => {
             headerRowByMentor
-            .append($("<th/>")
+            .append($("<th class='text-center'/>")
                 .append($("<span/>").text(mentor.name))
                 .append($(`<button type="button" class="ml-2 mb-1 btn btn-light btn-sm p-1"/>`)
                         .append($(`<small class="fas fa-trash"/>`)

@@ -19,6 +19,8 @@ import org.optaplanner.core.api.score.ScoreManager;
 import org.optaplanner.core.api.solver.SolverManager;
 import org.optaplanner.core.api.solver.SolverStatus;
 
+import io.quarkus.panache.common.Sort;
+
 @Path("/wingsSchedule")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -71,8 +73,8 @@ public class WingsScheduleResource {
         // Occurs in a single transaction, so each initialized lesson references the same timeslot/room instance
         // that is contained by the timeTable's timeslotList/roomList.
         return new WingsSchedule(
-                Mentor.listAll(),
-                Timeslot.listAll(),
+                Mentor.listAll(Sort.by("name")),
+                Timeslot.listAll(Sort.by("dayOfWeek").and("startTime").and("endTime").and("id")),
                 MentorAssignment.listAll());
     }
 

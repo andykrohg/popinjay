@@ -1,5 +1,5 @@
 <factorypath>
-    <factorypathentry kind="VARJAR" id="M2_REPO/org/optaplanner/optaplanner-quarkus/7.39.0.Final/optaplanner-quarkus-7.39.0.Final.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/optaplanner/optaplanner-quarkus/7.40.0.Final/optaplanner-quarkus-7.40.0.Final.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/io/quarkus/quarkus-core/1.6.0.Final/quarkus-core-1.6.0.Final.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/jakarta/enterprise/jakarta.enterprise.cdi-api/2.0.2/jakarta.enterprise.cdi-api-2.0.2.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/jakarta/el/jakarta.el-api/3.0.3/jakarta.el-api-3.0.3.jar" enabled="true" runInBatchMode="false"/>
@@ -26,7 +26,7 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/io/quarkus/quarkus-arc/1.6.0.Final/quarkus-arc-1.6.0.Final.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/io/quarkus/arc/arc/1.6.0.Final/arc-1.6.0.Final.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/eclipse/microprofile/context-propagation/microprofile-context-propagation-api/1.0.1/microprofile-context-propagation-api-1.0.1.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/org/optaplanner/optaplanner-core/7.39.0.Final/optaplanner-core-7.39.0.Final.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/optaplanner/optaplanner-core/7.40.0.Final/optaplanner-core-7.40.0.Final.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/commons/commons-lang3/3.9/commons-lang3-3.9.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/apache/commons/commons-math3/3.4.1/commons-math3-3.4.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/reflections/reflections/0.9.11/reflections-0.9.11.jar" enabled="true" runInBatchMode="false"/>
@@ -53,14 +53,14 @@
     <factorypathentry kind="VARJAR" id="M2_REPO/org/kie/kogito/drools-core-static/0.10.1/drools-core-static-0.10.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/kie/kogito/drools-core-reflective/0.10.1/drools-core-reflective-0.10.1.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/org/kie/kogito/kogito-internal/0.10.1/kogito-internal-0.10.1.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/org/optaplanner/optaplanner-quarkus-jackson/7.39.0.Final/optaplanner-quarkus-jackson-7.39.0.Final.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/optaplanner/optaplanner-quarkus-jackson/7.40.0.Final/optaplanner-quarkus-jackson-7.40.0.Final.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/io/quarkus/quarkus-jackson/1.6.0.Final/quarkus-jackson-1.6.0.Final.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/fasterxml/jackson/core/jackson-databind/2.10.4/jackson-databind-2.10.4.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.10.4/jackson-datatype-jsr310-2.10.4.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.10.4/jackson-datatype-jdk8-2.10.4.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/fasterxml/jackson/module/jackson-module-parameter-names/2.10.4/jackson-module-parameter-names-2.10.4.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/org/optaplanner/optaplanner-persistence-jackson/7.39.0.Final/optaplanner-persistence-jackson-7.39.0.Final.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="VARJAR" id="M2_REPO/org/optaplanner/optaplanner-persistence-common/7.39.0.Final/optaplanner-persistence-common-7.39.0.Final.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/optaplanner/optaplanner-persistence-jackson/7.40.0.Final/optaplanner-persistence-jackson-7.40.0.Final.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="VARJAR" id="M2_REPO/org/optaplanner/optaplanner-persistence-common/7.40.0.Final/optaplanner-persistence-common-7.40.0.Final.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/com/fasterxml/jackson/core/jackson-core/2.10.4/jackson-core-2.10.4.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/io/quarkus/quarkus-resteasy/1.6.0.Final/quarkus-resteasy-1.6.0.Final.jar" enabled="true" runInBatchMode="false"/>
     <factorypathentry kind="VARJAR" id="M2_REPO/io/quarkus/quarkus-vertx-http/1.6.0.Final/quarkus-vertx-http-1.6.0.Final.jar" enabled="true" runInBatchMode="false"/>

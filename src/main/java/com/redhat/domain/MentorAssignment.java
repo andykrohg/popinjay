@@ -29,7 +29,7 @@ public class MentorAssignment extends PanacheEntityBase {
     private WingsRun wingsRun;
     private int assignmentIndex; 
 
-    @PlanningVariable(valueRangeProviderRefs = "mentorRange")
+    @PlanningVariable(valueRangeProviderRefs = "mentorRange", nullable = true)
     @ManyToOne
     private Mentor mentor;
 

@@ -93,7 +93,17 @@ public class WingsRun extends PanacheEntityBase {
     }
 
     public enum Type {
-        MIDDLEWARE_OVERVIEW, DEEP_DIVE, FULL_RUN
+        MIDDLEWARE_OVERVIEW("Middleware Overview"), DEEP_DIVE("Deep Dive"), FULL_RUN("Full Run");
+
+        public String label;
+
+        private Type(String label) {
+            this.label = label;
+        }
+        
+        public String label() {
+            return this.label;
+        }
     }
 
 }

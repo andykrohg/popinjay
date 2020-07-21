@@ -1,0 +1,34 @@
+<solver>
+    <constructionHeuristic>
+        <constructionHeuristicType>FIRST_FIT</constructionHeuristicType>
+        <termination>
+            <secondsSpentLimit>10</secondsSpentLimit>
+        </termination>
+      </constructionHeuristic>
+    <localSearch>
+        <termination>
+            <minutesSpentLimit>5</minutesSpentLimit>
+          </termination>
+        <unionMoveSelector>
+            <changeMoveSelector>
+                <valueSelector variableName="mentor"></valueSelector>
+            </changeMoveSelector>
+            <!-- <swapMoveSelector/> -->
+
+            <moveListFactory>
+                <moveListFactoryClass>com.redhat.solver.MultiTimeslotMoveFactory</moveListFactoryClass>
+            </moveListFactory>
+            <!-- <pillarChangeMoveSelector>
+                <pillarSelector>
+                    <entitySelector>
+                        <entityClass>com.redhat.domain.MentorAssignment</entityClass>
+                    </entitySelector>
+                    <subPillarEnabled>true</subPillarEnabled>
+                    <minimumSubPillarSize>1</minimumSubPillarSize>
+                    <maximumSubPillarSize>3</maximumSubPillarSize>
+                </pillarSelector>
+                <valueSelector variableName="timeslot"></valueSelector>
+            </pillarChangeMoveSelector> -->
+        </unionMoveSelector>
+    </localSearch>
+</solver>

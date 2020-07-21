@@ -32,7 +32,7 @@ import com.redhat.domain.Mentor;
 
 public class GoogleCalendarIntegration {
     public static Map<String, List<Event>> schedules = new HashMap<String, List<Event>>();
-    public static LocalDate startDate = LocalDate.now().minusDays(LocalDate.now().getDayOfWeek().getValue() - 1);
+    public static LocalDate startDate = LocalDate.of(2020, 8, 17);//LocalDate.now().minusDays(LocalDate.now().getDayOfWeek().getValue() - 1);
 
     private static final String APPLICATION_NAME = "Google Calendar Integration";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();

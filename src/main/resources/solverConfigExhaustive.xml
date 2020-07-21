@@ -1,0 +1,8 @@
+<solver>
+      <exhaustiveSearch>
+        <termination>
+            <secondsSpentLimit>300</secondsSpentLimit>
+        </termination>
+        <exhaustiveSearchType>BRANCH_AND_BOUND</exhaustiveSearchType>
+      </exhaustiveSearch>
+</solver>

@@ -20,8 +20,8 @@
     <p>Schedule Wings Runs</p>
 
     <div style="margin-bottom: .5rem">
-        <button id="refreshButton" type="button" class="btn btn-secondary">
-            <span class="fas fa-refresh"></span> Refresh
+        <button id="refreshButton" type="button" class="btn btn-light">
+            <span class="fas fa-sync-alt"></span> Refresh
         </button>
         <button id="solveButton" type="button" class="btn btn-success">
             <span class="fas fa-play"></span> Solve
@@ -37,43 +37,22 @@
                 <li class="nav-item">
                     <a class="nav-link active" id="byMentorTab" data-toggle="tab" href="#byMentorPanel" role="tab" aria-controls="byMentorPanel" aria-selected="true">By Mentor</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="byTeacherTab" data-toggle="tab" href="#byTeacher" role="tab" aria-controls="byTeacher" aria-selected="false">By teacher</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="byStudentGroupTab" data-toggle="tab" href="#byStudentGroup" role="tab" aria-controls="byStudentGroup" aria-selected="false">By student group</a>
-                </li>
             </ul>
         </div>
     </div>
-    <div id = "startDate" class="font-weight-bold"></div>
+    <div>
+        <button type="button" class="btn btn-light" data-toggle="modal" data-target="#timeslotDialog">
+            <span class="fas fa-plus"></span> Add timeslot
+        </button>
+    </div>
+    <br/>
+    <h4 id = "startDate"></h4>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="byMentorPanel" role="tabpanel" aria-labelledby="byMentorTab">
             <table class="table table-borderless table-striped wingsScheduleSolution" id="wingsScheduleByMentor">
                 <!-- Filled in by app.js -->
             </table>
         </div>
-        <div class="tab-pane fade" id="byTeacher" role="tabpanel" aria-labelledby="byTeacherTab">
-            <table class="table table-borderless table-striped timeTableSolution" id="timeTableByTeacher">
-                <!-- Filled in by app.js -->
-            </table>
-        </div>
-        <div class="tab-pane fade" id="byStudentGroup" role="tabpanel" aria-labelledby="byStudentGroupTab">
-            <table class="table table-borderless table-striped timeTableSolution" id="timeTableByStudentGroup">
-                <!-- Filled in by app.js -->
-            </table>
-        </div>
-    </div>
-    <div>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#lessonDialog">
-            <span class="fas fa-plus"></span> Add lesson
-        </button>
-        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#timeslotDialog">
-            <span class="fas fa-plus"></span> Add timeslot
-        </button>
-        <button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#roomDialog">
-            <span class="fas fa-plus"></span> Add room
-        </button>
     </div>
 
     <h2 style="margin-top: 2rem">Pending Assignments</h2>
