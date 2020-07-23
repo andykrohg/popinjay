@@ -57,26 +57,38 @@ public class DemoDataGenerator {
         mentorList.add(new Mentor("enham", 4, null));
         mentorList.add(new Mentor("adtaylor", 5, null));
         mentorList.add(new Mentor("lkinser", 5, null));
-        mentorList.add(new Mentor("jrampras", 5, null));
+        mentorList.add(new Mentor("jrampras", 5, "jbowman"));
         mentorList.add(new Mentor("micdavis", 5, null));
-        mentorList.add(new Mentor("bcox", 4, null));
-        mentorList.add(new Mentor("mkuriti", 4, null));
+        mentorList.add(new Mentor("bcox", 4, "jkeam"));
+        mentorList.add(new Mentor("mkuriti", 4, "dvanbale"));
+        mentorList.add(new Mentor("akochnev", 3, null));
+        mentorList.add(new Mentor("mankumar", 2, "swoodwar"));
+        mentorList.add(new Mentor("jdudash", 2, null));
+        mentorList.add(new Mentor("jrampras", 2, null));
+        mentorList.add(new Mentor("gdykeman", 2, null));
+        mentorList.add(new Mentor("pbruszew", 1, null));
+        mentorList.add(new Mentor("tobo", 1, null));
 
-
-        
-
+        //Mentee list
         mentorList.add(new Mentor("afouladi", 4, null));
         mentorList.add(new Mentor("rcabrera", 4, null));
-        mentorList.add(new Mentor("scannata", 4, null));
-        
-
+        mentorList.add(new Mentor("gsharpna", 4, null));
+        mentorList.add(new Mentor("jbowman", 4, null));
+        mentorList.add(new Mentor("jkeam", 4, null));
+        mentorList.add(new Mentor("dvanbale", 4, null));
+        mentorList.add(new Mentor("swoodwar", 4, null));
+        mentorList.add(new Mentor("cedillon", 4, null));
         Mentor.persist(mentorList);
 
         List<WingsRun> wingsRunList = new ArrayList<WingsRun>();
         wingsRunList.add(new WingsRun("afouladi", WingsRun.Type.MIDDLEWARE_OVERVIEW));
         wingsRunList.add(new WingsRun("rcabrera", WingsRun.Type.FULL_RUN));
-        wingsRunList.add(new WingsRun("scannata", WingsRun.Type.DEEP_DIVE));
-
+        wingsRunList.add(new WingsRun("gsharpna", WingsRun.Type.FULL_RUN));
+        wingsRunList.add(new WingsRun("jbowman", WingsRun.Type.FULL_RUN));
+        wingsRunList.add(new WingsRun("jkeam", WingsRun.Type.DEEP_DIVE));
+        wingsRunList.add(new WingsRun("dvanbale", WingsRun.Type.DEEP_DIVE));
+        wingsRunList.add(new WingsRun("swoodwar", WingsRun.Type.MIDDLEWARE_OVERVIEW));
+        wingsRunList.add(new WingsRun("cedillon", WingsRun.Type.MIDDLEWARE_OVERVIEW));
         WingsRun.persist(wingsRunList);
 
         List<MentorAssignment> mentorAssignmentList = new ArrayList<MentorAssignment>();

@@ -10,6 +10,12 @@
             <acceptedCountLimit>1000</acceptedCountLimit>
             <finalistPodiumType>STRATEGIC_OSCILLATION</finalistPodiumType>
           </forager> -->
+        <acceptor>
+            <simulatedAnnealingStartingTemperature>0hard/0medium/10soft</simulatedAnnealingStartingTemperature>
+        </acceptor>
+        <forager>
+            <acceptedCountLimit>1</acceptedCountLimit>
+        </forager>
         <termination>
             <minutesSpentLimit>30</minutesSpentLimit>
           </termination>

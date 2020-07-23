@@ -73,7 +73,11 @@ public class WingsScheduleConstraintProvider implements ConstraintProvider {
     private Constraint multipleAssignmentsInTimeslotConflict(ConstraintFactory constraintFactory) {
         return constraintFactory.from(MentorAssignment.class)
                 .join(MentorAssignment.class, Joiners.equal(MentorAssignment::getMentor),
-                        Joiners.equal(MentorAssignment::getTimeslot), Joiners.lessThan(MentorAssignment::getId))
+                        Joiners.lessThan(MentorAssignment::getId), 
+                        Joiners.filtering((assignment1, assignment2) -> {
+                            return assignment1.getMentor() != null 
+                            && Objects.equal(assignment1.getTimeslot(), assignment2.getTimeslot());
+                        }))
                 .penalize("A mentor cannot have multiple assignments in the same timeslot.",
                         HardMediumSoftScore.ONE_HARD);
     }
@@ -91,8 +95,12 @@ public class WingsScheduleConstraintProvider implements ConstraintProvider {
 
     private Constraint selfAssignmentConflict(ConstraintFactory constraintFactory) {
         return constraintFactory.from(MentorAssignment.class).filter(mentorAssignment -> {
-            return mentorAssignment.getMentor() != null && Objects.equal(mentorAssignment.getMentor().getName(),
-                    mentorAssignment.getWingsRun().getStudent());
+            // if (mentorAssignment.getMentor() != null) {
+            //     System.out.println("STUDENT: " + mentorAssignment.getWingsRun().getStudent() + "\n" +
+            //                         "MENTOR: " + mentorAssignment.getMentor().getName());
+            // }
+            return mentorAssignment.getMentor() != null && mentorAssignment.getWingsRun().getStudent()
+                    .equals(mentorAssignment.getMentor().getName());
         }).penalize("Students cannot be assigned to their own panel.", HardMediumSoftScore.ONE_HARD);
     }
 
