@@ -71,6 +71,7 @@ public class WingsRun extends PanacheEntityBase {
         return this;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (o == this)
@@ -79,18 +80,14 @@ public class WingsRun extends PanacheEntityBase {
             return false;
         }
         WingsRun wingsRun = (WingsRun) o;
-        return Objects.equals(student, wingsRun.student) && Objects.equals(type, wingsRun.type);
+        return Objects.equals(id, wingsRun.id) && Objects.equals(student, wingsRun.student) && Objects.equals(type, wingsRun.type);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(student, type);
-    }
+    // @Override
+    // public int hashCode() {
+    //     return Objects.hash(id, student, type);
+    // }
 
-    @Override
-    public String toString() {
-        return "{" + " student='" + getStudent() + "'" + ", type='" + getType() + "'" + "}";
-    }
 
     public enum Type {
         MIDDLEWARE_OVERVIEW("Middleware Overview"), DEEP_DIVE("Deep Dive"), FULL_RUN("Full Run");

@@ -108,6 +108,7 @@ public class MultiTimeslotMove extends AbstractMove<WingsSchedule> {
         return this;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (o == this)
@@ -123,6 +124,7 @@ public class MultiTimeslotMove extends AbstractMove<WingsSchedule> {
     public int hashCode() {
         return Objects.hash(mentorAssignments, toTimeslot);
     }
+    
 
 
     public Map<MentorAssignment,Mentor> getMentorAssignments() {

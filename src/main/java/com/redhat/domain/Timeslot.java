@@ -2,6 +2,7 @@ package com.redhat.domain;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -58,5 +59,22 @@ public class Timeslot extends PanacheEntityBase {
     public String toString() {
         return dayOfWeek + " " + startTime;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof Timeslot)) {
+            return false;
+        }
+        Timeslot timeslot = (Timeslot) o;
+        return Objects.equals(id, timeslot.id) && Objects.equals(dayOfWeek, timeslot.dayOfWeek) && Objects.equals(startTime, timeslot.startTime) && Objects.equals(endTime, timeslot.endTime);
+    }
+
+    // @Override
+    // public int hashCode() {
+    //     return Objects.hash(id, dayOfWeek, startTime, endTime);
+    // }
 
 }

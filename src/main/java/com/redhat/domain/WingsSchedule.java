@@ -88,10 +88,10 @@ public class WingsSchedule {
         return Objects.equals(mentorList, wingsSchedule.mentorList) && Objects.equals(mentorAssignments, wingsSchedule.mentorAssignments) && Objects.equals(score, wingsSchedule.score);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(mentorList, mentorAssignments, score);
-    }
+    // @Override
+    // public int hashCode() {
+    //     return Objects.hash(mentorList, mentorAssignments, score);
+    // }
 
     @Override
     public String toString() {

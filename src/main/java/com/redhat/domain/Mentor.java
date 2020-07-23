@@ -75,6 +75,7 @@ public class Mentor extends PanacheEntityBase {
         return this;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (o == this)
@@ -83,13 +84,14 @@ public class Mentor extends PanacheEntityBase {
             return false;
         }
         Mentor mentor = (Mentor) o;
-        return Objects.equals(name, mentor.name) && affinity == mentor.affinity && Objects.equals(mentee, mentor.mentee);
+        return Objects.equals(id, mentor.id) && Objects.equals(name, mentor.name) && affinity == mentor.affinity && Objects.equals(mentee, mentor.mentee);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, affinity, mentee);
-    }
+    // @Override
+    // public int hashCode() {
+    //     return Objects.hash(id, name, affinity, mentee);
+    // }
+    
 
     @Override
     public String toString() {
