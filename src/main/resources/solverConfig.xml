@@ -22,9 +22,11 @@
         <unionMoveSelector>
             <changeMoveSelector>
                 <valueSelector variableName="mentor" />
+                <fixedProbabilityWeight>1.0</fixedProbabilityWeight>
             </changeMoveSelector>
 
             <moveListFactory>
+                <fixedProbabilityWeight>3.0</fixedProbabilityWeight>
                 <moveListFactoryClass>com.redhat.solver.MultiTimeslotMoveFactory</moveListFactoryClass>
             </moveListFactory>
             <!-- <pillarChangeMoveSelector>

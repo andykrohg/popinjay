@@ -64,7 +64,6 @@ public class DemoDataGenerator {
         mentorList.add(new Mentor("akochnev", 3, null));
         mentorList.add(new Mentor("mankumar", 2, "swoodwar"));
         mentorList.add(new Mentor("jdudash", 2, null));
-        mentorList.add(new Mentor("jrampras", 2, null));
         mentorList.add(new Mentor("gdykeman", 2, null));
         mentorList.add(new Mentor("pbruszew", 1, null));
         mentorList.add(new Mentor("tobo", 1, null));

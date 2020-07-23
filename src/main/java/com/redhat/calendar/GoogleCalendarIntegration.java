@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,7 +30,7 @@ import com.google.api.services.calendar.model.Events;
 import com.redhat.domain.Mentor;
 
 public class GoogleCalendarIntegration {
-    public static Map<String, List<Event>> schedules = new HashMap<String, List<Event>>();
+    public static Map<String, List<Event>> schedules = Collections.synchronizedMap(new HashMap<String,  List<Event>>());
     public static LocalDate startDate = LocalDate.of(2020, 8, 17);//LocalDate.now().minusDays(LocalDate.now().getDayOfWeek().getValue() - 1);
 
     private static final String APPLICATION_NAME = "Google Calendar Integration";
@@ -87,10 +86,10 @@ public class GoogleCalendarIntegration {
     } 
 
     public static void fetchSchedules() {
-        startDate = LocalDate.now().minusDays(LocalDate.now().getDayOfWeek().getValue() - 1);
+        // startDate = LocalDate.now().minusDays(LocalDate.now().getDayOfWeek().getValue() - 1);
         System.out.println(startDate);
 
-        Mentor.streamAll().map(mentor -> (Mentor) mentor).forEach(mentor -> {
+        Mentor.listAll().parallelStream().map(mentor -> (Mentor) mentor).forEach(mentor -> {
             try {
                 System.out.println("Updating schedule for " + mentor.getName());
                 List<Event> mentorSchedule = getScheduleByUsername(mentor.getName());
