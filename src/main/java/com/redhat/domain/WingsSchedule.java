@@ -1,5 +1,6 @@
 package com.redhat.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,6 +29,8 @@ public class WingsSchedule {
     private HardMediumSoftScore score;
 
     private SolverStatus solverStatus;
+
+    private List<String> errorMessages = new ArrayList<String>();
     
     public WingsSchedule() {
     }
@@ -116,5 +119,14 @@ public class WingsSchedule {
 
     public void setTimeslotList(List<Timeslot> timeslotList) {
         this.timeslotList = timeslotList;
+    }
+
+
+    public List<String> getErrorMessages() {
+        return this.errorMessages;
+    }
+
+    public void setErrorMessages(List<String> errorMessages) {
+        this.errorMessages = errorMessages;
     }
 }

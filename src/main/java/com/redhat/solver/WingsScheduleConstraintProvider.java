@@ -1,14 +1,7 @@
 package com.redhat.solver;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
-import com.google.api.services.calendar.model.Event;
 import com.google.common.base.Objects;
 import com.redhat.calendar.GoogleCalendarIntegration;
-import com.redhat.domain.Mentor;
 import com.redhat.domain.MentorAssignment;
 
 import org.optaplanner.core.api.score.buildin.hardmediumsoft.HardMediumSoftScore;
@@ -35,39 +28,21 @@ public class WingsScheduleConstraintProvider implements ConstraintProvider {
                 // soft
                 mentorAffinity(constraintFactory), mentorPairing(constraintFactory),
                 maxAssignmentsPerWeek(constraintFactory)
-                // mentorAssigned(constraintFactory),
-                // minimumPanelConflict(constraintFactory),
         };
     }
 
     private Constraint studentCalendarConflict(ConstraintFactory constraintFactory) {
         return constraintFactory.from(MentorAssignment.class).filter(mentorAssignment -> {
-            LocalDate timeslotDate = GoogleCalendarIntegration.startDate
-                    .plusDays(mentorAssignment.getTimeslot().getDayOfWeek().getValue() - 1);
-            LocalDateTime timeslotStart = mentorAssignment.getTimeslot().getStartTime().atDate(timeslotDate);
-            LocalDateTime timeslotEnd = mentorAssignment.getTimeslot().getEndTime().atDate(timeslotDate);
-
-            return doesConflictExist(timeslotStart, timeslotEnd,
+            return GoogleCalendarIntegration.doesConflictExist(mentorAssignment.getTimeslot(),
                     GoogleCalendarIntegration.schedules.get(mentorAssignment.getWingsRun().getStudent()));
         }).penalize("Student is unavailable for the requested timeslot", HardMediumSoftScore.ONE_MEDIUM);
     }
 
     private Constraint mentorCalendarConflict(ConstraintFactory constraintFactory) {
         return constraintFactory.from(MentorAssignment.class).filter(mentorAssignment -> {
-            LocalDate timeslotDate = GoogleCalendarIntegration.startDate
-                    .plusDays(mentorAssignment.getTimeslot().getDayOfWeek().getValue() - 1);
-            LocalDateTime timeslotStart = mentorAssignment.getTimeslot().getStartTime().atDate(timeslotDate);
-            LocalDateTime timeslotEnd = mentorAssignment.getTimeslot().getEndTime().atDate(timeslotDate);
-
-            return mentorAssignment.getMentor() != null && doesConflictExist(timeslotStart, timeslotEnd,
+            return mentorAssignment.getMentor() != null && GoogleCalendarIntegration.doesConflictExist(mentorAssignment.getTimeslot(),
                     GoogleCalendarIntegration.schedules.get(mentorAssignment.getMentor().getName()));
         }).penalize("Mentor is unavailable for the requested timeslot", HardMediumSoftScore.ONE_MEDIUM);
-    }
-
-    private Constraint mentorAssigned(ConstraintFactory constraintFactory) {
-        return constraintFactory.from(MentorAssignment.class).filter(mentorAssignment -> {
-            return mentorAssignment.getMentor() != null;
-        }).reward("Prefer mentors to be assigned", HardMediumSoftScore.ONE_SOFT);
     }
 
     private Constraint multipleAssignmentsInTimeslotConflict(ConstraintFactory constraintFactory) {
@@ -127,51 +102,5 @@ public class WingsScheduleConstraintProvider implements ConstraintProvider {
                 mentorAssignment -> {
                     return mentorAssignment.getMentor() == null ? 0 : mentorAssignment.getMentor().getAffinity();
                 });
-    }
-
-    private Constraint minimumPanelConflict(ConstraintFactory constraintFactory) {
-        return constraintFactory.from(MentorAssignment.class).filter(mentorAssignment -> {
-            LocalDate timeslotDate = GoogleCalendarIntegration.startDate
-                    .plusDays(mentorAssignment.getTimeslot().getDayOfWeek().getValue() - 1);
-            LocalDateTime timeslotStart = mentorAssignment.getTimeslot().getStartTime().atDate(timeslotDate);
-            LocalDateTime timeslotEnd = mentorAssignment.getTimeslot().getEndTime().atDate(timeslotDate);
-
-            return Mentor.streamAll().map(mentor -> (Mentor) mentor).filter(mentor -> {
-                return !doesConflictExist(timeslotStart, timeslotEnd,
-                        GoogleCalendarIntegration.schedules.get(mentor.getName()));
-            }).count() < 3;
-        }).penalize("Three", HardMediumSoftScore.ONE_HARD);
-    }
-
-    /**
-     * Helper method to determine whether a timeslot delineated by the provided
-     * start and end time interferes with one or more events in the provided
-     * schedule.
-     * 
-     * @param timeslotStart the start of the timeslot
-     * @param timeslotEnd   the end of the timeslot
-     * @param schedule      a {@link java.util.List} of
-     *                      {@link com.google.api.services.calendar.model.Event}s
-     *                      sourced from a Google Calendar
-     * 
-     * @return true if a conflict is found
-     */
-    private boolean doesConflictExist(LocalDateTime timeslotStart, LocalDateTime timeslotEnd, List<Event> schedule) {
-        return schedule.stream().anyMatch(event -> {
-            LocalDateTime eventStart;
-            LocalDateTime eventEnd;
-            if (event.getStart().getDateTime() != null) {
-                eventStart = LocalDateTime.parse(event.getStart().getDateTime().toString(),
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
-                eventEnd = LocalDateTime.parse(event.getEnd().getDateTime().toString(),
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
-
-            } else {
-                eventStart = LocalDate.parse(event.getStart().getDate().toString()).atStartOfDay();
-                eventEnd = LocalDate.parse(event.getEnd().getDate().toString()).plusDays(1).atStartOfDay();
-            }
-
-            return timeslotEnd.compareTo(eventStart) >= 0 && timeslotStart.compareTo(eventEnd) <= 0;
-        });
     }
 }

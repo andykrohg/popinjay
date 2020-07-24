@@ -12,7 +12,10 @@ function refreshWingsSchedule() {
         refreshSolvingButtons(wingsSchedule.solverStatus != null && wingsSchedule.solverStatus !== "NOT_SOLVING");
         $("#score").text("Score: "+ (wingsSchedule.score == null ? "?" : wingsSchedule.score));
 
-        console.log(startDate);
+        $("#errorMessages").children().remove();
+        $.each(wingsSchedule.errorMessages, (index, message) => {
+            $("#errorMessages").append("<p class='text-danger font-weight-bold'/>").text(message);
+        });
 
         const wingsScheduleByMentor = $("#wingsScheduleByMentor");
         wingsScheduleByMentor.children().remove();

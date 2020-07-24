@@ -6,7 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +30,7 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 import com.redhat.domain.Mentor;
+import com.redhat.domain.Timeslot;
 
 public class GoogleCalendarIntegration {
     public static Map<String, List<Event>> schedules = Collections.synchronizedMap(new HashMap<String,  List<Event>>());
@@ -98,6 +101,42 @@ public class GoogleCalendarIntegration {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
+        });
+    }
+
+    /**
+     * Helper method to determine whether the provided
+     * timeslot interferes with one or more events in the provided
+     * schedule.
+     * 
+     * @param timeslot the timeslot
+     * @param schedule      a {@link java.util.List} of
+     *                      {@link com.google.api.services.calendar.model.Event}s
+     *                      sourced from a Google Calendar
+     * 
+     * @return true if a conflict is found
+     */
+    public static boolean doesConflictExist(Timeslot timeslot, List<Event> schedule) {
+        LocalDate timeslotDate = GoogleCalendarIntegration.startDate
+                .plusDays(timeslot.getDayOfWeek().getValue() - 1);
+        LocalDateTime timeslotStart = timeslot.getStartTime().atDate(timeslotDate);
+        LocalDateTime timeslotEnd = timeslot.getEndTime().atDate(timeslotDate);
+
+        return schedule.stream().anyMatch(event -> {
+            LocalDateTime eventStart;
+            LocalDateTime eventEnd;
+            if (event.getStart().getDateTime() != null) {
+                eventStart = LocalDateTime.parse(event.getStart().getDateTime().toString(),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+                eventEnd = LocalDateTime.parse(event.getEnd().getDateTime().toString(),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+
+            } else {
+                eventStart = LocalDate.parse(event.getStart().getDate().toString()).atStartOfDay();
+                eventEnd = LocalDate.parse(event.getEnd().getDate().toString()).plusDays(1).atStartOfDay();
+            }
+
+            return timeslotEnd.compareTo(eventStart) >= 0 && timeslotStart.compareTo(eventEnd) <= 0;
         });
     }
 }

@@ -1,5 +1,9 @@
 package com.redhat.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
@@ -28,12 +32,16 @@ public class WingsScheduleResource {
 
     public static final Long SINGLETON_WINGS_SCHEDULE_ID = 1L;
 
+    public static List<String> errorMessages = new ArrayList<String>();
+
     @Inject
     SolverManager<WingsSchedule, Long> solverManager;
     @Inject
     ScoreManager<WingsSchedule> scoreManager;
 
-    // To try, open http://localhost:8080/timeTable
+
+
+    // To try, open http://localhost:8080/wingsSchedule
     @GET
     public WingsSchedule getWingsSchedule() {
         // Get the solver status before loading the solution
@@ -42,6 +50,7 @@ public class WingsScheduleResource {
         WingsSchedule solution = findById(SINGLETON_WINGS_SCHEDULE_ID);
         scoreManager.updateScore(solution); // Sets the score
         solution.setSolverStatus(solverStatus);
+        solution.setErrorMessages(errorMessages);
         return solution;
     }
 
@@ -49,6 +58,17 @@ public class WingsScheduleResource {
     @Path("/solve")
     public void solve() {
         GoogleCalendarIntegration.fetchSchedules();
+        WingsSchedule wingsSchedule = findById(WingsScheduleResource.SINGLETON_WINGS_SCHEDULE_ID);
+        wingsSchedule.getMentorAssignments().parallelStream()
+            .collect(Collectors.groupingBy(mentorAssignment -> mentorAssignment.getWingsRun().getStudent())).keySet().forEach(student -> {
+            boolean completelyBooked = wingsSchedule.getTimeslotList().parallelStream()
+                .noneMatch(timeslot -> {
+                    return ! GoogleCalendarIntegration.doesConflictExist(timeslot, GoogleCalendarIntegration.schedules.get(student));
+                });
+            if (completelyBooked) {
+                errorMessages.add(student + " is COMPLETELY BOOKED for the provided week. You'll need to remove their run to achieve a feasible solution.");
+            }
+        });
         
         solverManager.solveAndListen(SINGLETON_WINGS_SCHEDULE_ID,
                 this::findById,
