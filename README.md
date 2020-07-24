@@ -1,18 +1,25 @@
-# Popinjay: OptaPlanner AI with Hibernate ORM and RESTEasy
+# Popinjay
+## AI Wings Run Scheduler
 
 This project contains a [Quarkus](https://quarkus.io/) application
 with [OptaPlanner](https://www.optaplanner.org/)'s constraint solving Artificial Intelligence (AI)
 integrated with a database and exposed through a REST API.
 
 This web application optimizes a wings schedule for students and mentors.
-It assigns `MentorAssignment` instances to `Timeslot` and `Mentor` instances automatically
+It assigns `Timeslot` and `Mentor` values to `MentorAssignment` instances automatically
 by using AI to adhere to hard and soft scheduling constraints, such as:
 
-* *Calendar conflict*: Mentor is unavailable for the requested timeslot (Google calendar integration).
+* *Calendar conflict*: Mentor (or the student presenter) is unavailable for the requested timeslot (Google calendar integration).
 * *Mentor conflict*: A mentor cannot have multiple assignments in the same timeslot.
+* *Self assignment conflict*: A student cannot be assigned to the panel of their own wings run.
 * *Mentor pairing constraint*:  Prefer to pair mentors with their mentees.
 * *Max assignments*: Prefer mentors not to have more than [5] assignments per week.
 * *Mentor affinity*: Prefer assignments to more actively engaged mentors.
+
+## Google Calendar Integration
+The calendar conflict constraint requires read-only access to your Google calendar. The mentors you add as `ProblemFacts` should be named according to their email address. At the moment, `GoogleCalendarIntegration.fetchSchedules()` suffixes the provided username with `@redhat.com`.
+
+Upon starting a solver, the `GoogleCalendarIntegration` class presents a credential to the Google Oauth server, which will open an authorization page in your browser where you'll need to grant access. It expects to find this credential in `src/main/resources/credentials.json`, which can be obtained here: https://console.cloud.google.com/apis/credentials. If you have sufficient privileges for your cloud account, you can utilize a Service Account. I don't, so I created an OAuth Client ID.
 
 
 ## Run the application with live coding
@@ -46,7 +53,7 @@ When you're done iterating in `quarkus:dev` mode, run the application as a conve
 2. run it:
 
     ```
-    java -jar ./target/optaplanner-quickstart-1.0-SNAPSHOT-runner.jar
+    java -jar ./target/popinjay-1.0-SNAPSHOT-runner.jar
     ```
 
 Look at how fast it boots!
