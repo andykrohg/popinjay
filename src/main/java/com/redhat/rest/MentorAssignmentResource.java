@@ -13,35 +13,31 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.redhat.domain.Mentor;
+import com.redhat.domain.MentorAssignment;
 import com.redhat.domain.Timeslot;
 
 import io.quarkus.panache.common.Sort;
 
-@Path("/timeslots")
+@Path("/mentorAssignments")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Transactional
-public class TimeslotResource {
+public class MentorAssignmentResource {
 
     @GET
-    public List<Timeslot> getAllTimeslots() {
-        return Timeslot.listAll(Sort.by("dayOfWeek").and("startTime").and("endTime").and("id"));
-    }
-
-    @POST
-    public Response add(Timeslot timeslot) {
-        Timeslot.persist(timeslot);
-        return Response.accepted(timeslot).build();
+    public List<Timeslot> getAllMentorAssignments() {
+        return Mentor.listAll(Sort.by("timeslot"));
     }
 
     @DELETE
-    @Path("{timeslotId}")
-    public Response delete(@PathParam("timeslotId") Long timeslotId) {
-        Timeslot timeslot = Timeslot.findById(timeslotId);
-        if (timeslot == null) {
+    @Path("{mentorAssignmentId}")
+    public Response delete(@PathParam("mentorAssignmentId") Long mentorAssignmentId) {
+        MentorAssignment assignment = MentorAssignment.findById(mentorAssignmentId);
+        if (assignment == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        timeslot.delete();
+        assignment.delete();
         return Response.status(Response.Status.OK).build();
     }
 }

@@ -122,11 +122,6 @@ public class MentorAssignment extends PanacheEntityBase {
         return Objects.equals(id, mentorAssignment.id) && Objects.equals(wingsRun, mentorAssignment.wingsRun) && assignmentIndex == mentorAssignment.assignmentIndex && Objects.equals(mentor, mentorAssignment.mentor) && Objects.equals(timeslot, mentorAssignment.timeslot);
     }
 
-    // @Override
-    // public int hashCode() {
-    //     return Objects.hash(id, wingsRun, assignmentIndex, mentor, timeslot);
-    // }
-
     @Override
     public String toString() {
         return "{" +

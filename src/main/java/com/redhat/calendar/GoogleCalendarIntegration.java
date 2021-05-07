@@ -34,7 +34,7 @@ import com.redhat.domain.Timeslot;
 
 public class GoogleCalendarIntegration {
     public static Map<String, List<Event>> schedules = Collections.synchronizedMap(new HashMap<String,  List<Event>>());
-    public static LocalDate startDate = LocalDate.of(2020, 8, 17);//LocalDate.now().minusDays(LocalDate.now().getDayOfWeek().getValue() - 1);
+    public static LocalDate startDate = LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue());
 
     private static final String APPLICATION_NAME = "Google Calendar Integration";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
@@ -89,7 +89,6 @@ public class GoogleCalendarIntegration {
     } 
 
     public static void fetchSchedules() {
-        // startDate = LocalDate.now().minusDays(LocalDate.now().getDayOfWeek().getValue() - 1);
         System.out.println(startDate);
 
         Mentor.listAll().parallelStream().map(mentor -> (Mentor) mentor).forEach(mentor -> {

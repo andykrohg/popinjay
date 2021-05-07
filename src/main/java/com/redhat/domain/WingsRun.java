@@ -83,12 +83,6 @@ public class WingsRun extends PanacheEntityBase {
         return Objects.equals(id, wingsRun.id) && Objects.equals(student, wingsRun.student) && Objects.equals(type, wingsRun.type);
     }
 
-    // @Override
-    // public int hashCode() {
-    //     return Objects.hash(id, student, type);
-    // }
-
-
     public enum Type {
         MIDDLEWARE_OVERVIEW("Middleware Overview"), DEEP_DIVE("Deep Dive"), FULL_RUN("Full Run");
 

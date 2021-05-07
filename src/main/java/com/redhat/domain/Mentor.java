@@ -30,6 +30,13 @@ public class Mentor extends PanacheEntityBase {
     public Mentor() {
     }
 
+    /**
+     * 
+     * @param name the mentor's username (e.g. Andy Krohg's is akrohg)
+     * @param affinity a positive integer indicating this mentor's degree of involvement
+     *             in wings. A higher affinity results in more panel assignments.
+     * @param mentee the username of this mentor's mentee if applicable, otherwise null
+     */
     public Mentor(String name, int affinity, String mentee) {
         this.name = name;
         this.affinity = affinity;
@@ -75,7 +82,6 @@ public class Mentor extends PanacheEntityBase {
         return this;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (o == this)
@@ -86,13 +92,7 @@ public class Mentor extends PanacheEntityBase {
         Mentor mentor = (Mentor) o;
         return Objects.equals(id, mentor.id) && Objects.equals(name, mentor.name) && affinity == mentor.affinity && Objects.equals(mentee, mentor.mentee);
     }
-
-    // @Override
-    // public int hashCode() {
-    //     return Objects.hash(id, name, affinity, mentee);
-    // }
     
-
     @Override
     public String toString() {
         return "{" +
@@ -114,6 +114,4 @@ public class Mentor extends PanacheEntityBase {
     public void setId(Long id) {
         this.id = id;
     }
-
-    
 }

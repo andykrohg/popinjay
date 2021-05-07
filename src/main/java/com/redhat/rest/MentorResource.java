@@ -13,35 +13,37 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.redhat.domain.Mentor;
 import com.redhat.domain.Timeslot;
 
 import io.quarkus.panache.common.Sort;
 
-@Path("/timeslots")
+@Path("/mentors")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Transactional
-public class TimeslotResource {
+public class MentorResource {
 
     @GET
-    public List<Timeslot> getAllTimeslots() {
-        return Timeslot.listAll(Sort.by("dayOfWeek").and("startTime").and("endTime").and("id"));
+    public List<Timeslot> getAllMentors() {
+        return Mentor.listAll(Sort.by("name"));
     }
 
     @POST
-    public Response add(Timeslot timeslot) {
-        Timeslot.persist(timeslot);
-        return Response.accepted(timeslot).build();
+    public Response add(Mentor mentor) {
+        Mentor.persist(mentor);
+        return Response.accepted(mentor).build();
     }
 
     @DELETE
-    @Path("{timeslotId}")
-    public Response delete(@PathParam("timeslotId") Long timeslotId) {
-        Timeslot timeslot = Timeslot.findById(timeslotId);
-        if (timeslot == null) {
+    @Path("{mentorId}")
+    public Response delete(@PathParam("mentorId") Long mentorId) {
+        Mentor mentor = Mentor.findById(mentorId);
+        if (mentor == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        timeslot.delete();
+        mentor.delete();
         return Response.status(Response.Status.OK).build();
     }
+
 }
