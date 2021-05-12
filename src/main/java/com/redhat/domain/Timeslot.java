@@ -71,10 +71,4 @@ public class Timeslot extends PanacheEntityBase {
         Timeslot timeslot = (Timeslot) o;
         return Objects.equals(id, timeslot.id) && Objects.equals(dayOfWeek, timeslot.dayOfWeek) && Objects.equals(startTime, timeslot.startTime) && Objects.equals(endTime, timeslot.endTime);
     }
-
-    // @Override
-    // public int hashCode() {
-    //     return Objects.hash(id, dayOfWeek, startTime, endTime);
-    // }
-
 }

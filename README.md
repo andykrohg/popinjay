@@ -19,78 +19,29 @@ by using AI to adhere to hard and soft scheduling constraints, such as:
 ## Google Calendar Integration
 The calendar conflict constraint requires read-only access to your Google calendar. The mentors you add as `ProblemFacts` should be named according to their email address. At the moment, `GoogleCalendarIntegration.fetchSchedules()` suffixes the provided username with `@redhat.com`.
 
-Upon starting a solver, the `GoogleCalendarIntegration` class presents a credential to the Google Oauth server, which will open an authorization page in your browser where you'll need to grant access. It expects to find this credential in `src/main/resources/credentials.json`, which can be obtained here: https://console.cloud.google.com/apis/credentials. If you have sufficient privileges for your cloud account, you can utilize a Service Account. I don't, so I created an OAuth Client ID.
+## Use this to schedule *your* wings runs!
 
+1. Clone this repository, and `cd` into it:
 
-## Run the application with live coding
-
-1. Start the application:
+    ```
+    git clone https://github.com/andykrohg/popinjay.git
+    cd popinjay
+    ```
+2. Create an **Oauth Client** for Red Hat's GSuite:
+    1. Visit https://console.cloud.google.com/apis/credentials, and login with your Red Hat google account.
+    2. Click the Project dropdown in the top left, and click **NEW PROJECT** in the top-right of the modal that pops up. Name the project anything you like (e.g. "Popinjay-akrohg").
+    3. Click the hamburger in the top left and visit **APIs & Services -> Credentials**
+    4. Click **CREATE CREDENTIALS** and choose type **Oauth client**
+    5. Use **Applictation type: Desktop app**, and use any name you like.
+    6. Open the newly created client and click **DOWNLOAD JSON**. Move/rename the resultant file to `popinjay/src/main/resources/credentials.json`
+3. Run the app using the maven wrapper:
 
     ```
     ./mvnw quarkus:dev
     ```
 
-2. Visit http://localhost:8080 in your browser.
-3. Click on the _Solve_ button.
-
-Now try live coding:
-
-1. Make some changes in the source code
-2. Refresh your browser (F5).
-
-Those changes are immediately applied.
-
-## Package and run the application
-
-When you're done iterating in `quarkus:dev` mode, run the application as a conventional jar file.
-
-1. Compile it:
-
-    ```
-    ./mvnw package
-    ```
-
-2. run it:
-
-    ```
-    java -jar ./target/popinjay-1.0-SNAPSHOT-runner.jar
-    ```
-
-Look at how fast it boots!
-
-## Run a native executable
-
-You can also create a native executable from this application without making any
-source code changes. A native executable removes the dependency on the JVM:
-everything needed to run the application on the target platform is included in
-the executable, allowing the application to run with minimal resource overhead.
-
-Because the quarkus H2 extension does not support compiling the embedded database engine into native images,
-you need to run the H2 server locally first:
-
- 1. Download the [H2 engine](http://www.h2database.com/html/download.html) (Platform-independent zip)
- 
- 2. Unzip it.
-
- 3. Start H2 server with the option `-ifNotExists` (this is not recommended in production but saves you from creating the database manually)
-
-    ```shell script
-    cd h2/bin && java -cp h2*.jar org.h2.tools.Server -ifNotExists
-    ```
-
-The database connection in configured in the `application.properties` file,
-specifically with the `%prod.quarkus.datasource.*` properties.
-
-
-Compiling a native executable takes a bit of time,
- as GraalVM performs additional steps to remove unnecessary codepaths.
- Use `-Dnative` to compile a native executable:
-
-```
-./mvnw package -Dnative
-```
-After getting a cup of coffee, run this binary directly:
-
-```
-./target/popinjay-1.0-SNAPSHOT-runner
-```
+4. Visit http://localhost:8080 in your browser. You'll see a schedule beginning the first Monday following the current date.
+5. Modify the week's **Timeslots**, **Mentors**, and **Wings Runs** as you see fit. Be sure to use mentor's **user ID** from [Rover](https://rover.redhat.com/people) so that calendar's are accessed correctly.
+6. Click **Solve**. The app will open a new tab requesting write access to your Calendar. This is required for sending meeting invites for the generated schedule.
+7. After granting permissions, go back to your other tab. If it displays an error, click **Solve** again. The solver will run for 60 seconds, attempting to build the best-scoring solution.
+8. If you're satisfied with the output, click **Send Meeting Invites** and confirm to send out meeting invites for the generated schedule.

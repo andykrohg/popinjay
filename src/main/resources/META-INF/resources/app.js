@@ -170,9 +170,18 @@ function addWingsRun() {
     }), function () {
         refreshWingsSchedule();
     }).fail(function(xhr, ajaxOptions, thrownError) {
-        showError("Adding wings run (" +  + ") failed.", xhr);
+        showError("Adding wings run for student " + $("#wings_run_student").val().trim() + " failed.", xhr);
     });
     $('#wingsRunDialog').modal('toggle');
+}
+
+function sendMeetingInvites() {
+    $.post("/meetings", "{}", function () {
+        showInfo("Meeting invites sent.");
+    }).fail(function(xhr, ajaxOptions, thrownError) {
+        showError("Sending meetings failed", xhr);
+    });
+    $('#meetingsDialog').modal('toggle');
 }
 
 function deleteMentor(mentor) {
@@ -189,6 +198,25 @@ function deleteMentorAssignment(mentorAssignment) {
     }).fail(function(xhr, ajaxOptions, thrownError) {
         showError("Deleting mentor assignment (" + mentorAssignment.id + ") failed.", xhr);
     });
+}
+
+function showInfo(title) {
+    const notification = $(`<div class="toast" role="alert" role="alert" aria-live="assertive" aria-atomic="true" style="min-width: 30rem"/>`)
+            .append($(`<div class="toast-header bg-success">
+                            <strong class="mr-auto text-dark">Success</strong>
+                            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>`))
+            .append($(`<div class="toast-body"/>`)
+                    .append($(`<p/>`).text(title))
+                    .append($(`<pre/>`)
+                            .append($(`<code/>`))
+                    )
+            );
+    $("#notificationPanel").append(notification);
+    notification.toast({delay: 30000});
+    notification.toast('show');
 }
 
 function showError(title, xhr) {
@@ -258,6 +286,9 @@ $(document).ready( function() {
     });
     $("#addRunSubmitButton").click(function() {
         addWingsRun();
+    });
+    $("#meetingsSubmitButton").click(function() {
+        sendMeetingInvites();
     });
 
     refreshWingsSchedule();

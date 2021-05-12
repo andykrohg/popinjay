@@ -17,8 +17,6 @@ import com.redhat.domain.Mentor;
 import com.redhat.domain.MentorAssignment;
 import com.redhat.domain.Timeslot;
 
-import io.quarkus.panache.common.Sort;
-
 @Path("/mentorAssignments")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -27,7 +25,13 @@ public class MentorAssignmentResource {
 
     @GET
     public List<Timeslot> getAllMentorAssignments() {
-        return Mentor.listAll(Sort.by("timeslot"));
+        return Mentor.listAll();
+    }
+
+    @POST
+    public Response add(MentorAssignment assignment) {
+        MentorAssignment.persist(assignment);
+        return Response.accepted(assignment).build();
     }
 
     @DELETE
@@ -40,4 +44,5 @@ public class MentorAssignmentResource {
         assignment.delete();
         return Response.status(Response.Status.OK).build();
     }
+
 }

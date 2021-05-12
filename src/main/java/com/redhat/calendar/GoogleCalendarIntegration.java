@@ -9,10 +9,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
@@ -27,24 +30,42 @@ import com.google.api.client.util.DateTime;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.services.calendar.model.ConferenceData;
+import com.google.api.services.calendar.model.CreateConferenceRequest;
 import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.Event.Organizer;
+import com.google.api.services.calendar.model.EventAttendee;
+import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
 import com.redhat.domain.Mentor;
+import com.redhat.domain.MentorAssignment;
 import com.redhat.domain.Timeslot;
+import com.redhat.domain.WingsRun;
 
 public class GoogleCalendarIntegration {
     public static Map<String, List<Event>> schedules = Collections.synchronizedMap(new HashMap<String,  List<Event>>());
     public static LocalDate startDate = LocalDate.now().plusDays(8 - LocalDate.now().getDayOfWeek().getValue());
 
-    private static final String APPLICATION_NAME = "Google Calendar Integration";
+    private static final String APPLICATION_NAME = "Popinjay - Wings Scheduler";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
+    private static final String TIMEZONE = "America/New_York";
+    private static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+    private static final List<String> SCENARIO_DOCUMENTS = Arrays.asList(
+        "https://docs.google.com/document/d/1pmSj3YJsn0RPrCym5vSEFVTCvnoZjMkQ2kEBrCWzizc/edit?usp=sharing",
+        "https://docs.google.com/document/d/1IgfW_2AxMh4xt8Bjquj1V0TkyDXEWLZW-zxACaqn5o4/edit?usp=sharing",
+        "https://docs.google.com/document/d/1REIAGn_ZVlun2pQzQUkNF0NENg5K6YaKCHP0wVw4bXg/edit?usp=sharing",
+        "https://docs.google.com/document/d/1x5fIPTop596bzJN0his1jLfsoiiMaaTVg-JP_B_mhEo/edit?usp=sharing",
+        "https://docs.google.com/document/d/1zCRtwrRRDHbV0g3K454kPrKI87LEuT35Hu3n08IfHkQ/edit?usp=sharing",
+        "https://docs.google.com/document/d/1nx7v0tFiHqR-f4EyrT5HUpvwRqL-pENvyjTCb6maXK0/edit?usp=sharing",
+        "https://docs.google.com/document/d/1VqVO4Uoj-NOmkdDwx1npVk_EJiAcBj7D_EpULEqFGuo/edit?usp=sharing"
+    );
 
     /**
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
      */
-    private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR_READONLY);
+    private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
 
     /**
@@ -79,8 +100,8 @@ public class GoogleCalendarIntegration {
                 .build();
 
         Events events = service.events().list(username + "@redhat.com")
-                .setTimeMin(new DateTime(startDate.atTime(9,0).atZone(ZoneId.systemDefault()).toEpochSecond() * 1000))
-                .setTimeMax(new DateTime(startDate.atTime(17,0).plusDays(4).atZone(ZoneId.systemDefault()).toEpochSecond() * 1000))
+                .setTimeMin(new DateTime(startDate.atTime(9,0).atZone(ZoneId.of(TIMEZONE)).toEpochSecond() * 1000))
+                .setTimeMax(new DateTime(startDate.atTime(17,0).plusDays(4).atZone(ZoneId.of(TIMEZONE)).toEpochSecond() * 1000))
                 .setOrderBy("startTime")
                 .setSingleEvents(true)
                 .execute();
@@ -101,6 +122,68 @@ public class GoogleCalendarIntegration {
                 e.printStackTrace();
             }
         });
+    }
+
+    public static boolean createEvent(WingsRun wingsRun, List<MentorAssignment> mentorAssignments) throws GeneralSecurityException, IOException {
+        if (mentorAssignments == null || mentorAssignments.isEmpty() || mentorAssignments.stream().noneMatch(assignment -> assignment.getTimeslot() != null)) {
+            System.err.println("No mentor assignments found. Refusing to create event for wingsRun " + wingsRun);
+            return false;
+        }
+
+        final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+
+        Calendar service = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+                .setApplicationName(APPLICATION_NAME)
+                .build();
+
+        // GET DATE INFO
+        Timeslot timeslot = mentorAssignments.stream().filter(assignment -> {
+            return assignment.getTimeslot() != null;
+        }).findFirst().get().getTimeslot();
+
+        LocalDate timeslotDate = GoogleCalendarIntegration.startDate
+                .plusDays(timeslot.getDayOfWeek().getValue() - 1);
+        LocalDateTime timeslotStart = timeslot.getStartTime().atDate(timeslotDate);
+        LocalDateTime timeslotEnd = timeslot.getEndTime().atDate(timeslotDate);
+
+        DateTime startDateTime = new DateTime(timeslotStart.atZone(ZoneId.of(TIMEZONE)).format(DateTimeFormatter.ofPattern(DATETIME_FORMAT)));
+        EventDateTime start = new EventDateTime()
+            .setDateTime(startDateTime)
+            .setTimeZone(TIMEZONE);
+
+        DateTime endDateTime = new DateTime(timeslotEnd.atZone(ZoneId.of(TIMEZONE)).format(DateTimeFormatter.ofPattern(DATETIME_FORMAT)));
+        EventDateTime end = new EventDateTime()
+            .setDateTime(endDateTime)
+            .setTimeZone(TIMEZONE);
+        
+        Event event = new Event();
+
+        event.setStart(start);
+        event.setEnd(end);
+
+        event.setSummary("🦜 Wings Run for " + wingsRun.getStudent() + ": " + wingsRun.getType());
+        event.setDescription(
+            "Your presence is kindly requested for this wings run panel.\n\n" +
+            "Please refer to this document for the accompanying roles and scenario (if needed):\n" +
+            SCENARIO_DOCUMENTS.get(new Random().nextInt(SCENARIO_DOCUMENTS.size()))
+            );
+        
+        event.setConferenceData(
+            new ConferenceData().setCreateRequest(
+                new CreateConferenceRequest().setRequestId(wingsRun.toString())));
+
+        List<EventAttendee> attendees = mentorAssignments.stream().filter(assignment -> assignment.getMentor() != null)
+            .map(assignment -> {
+                return new EventAttendee().setEmail(assignment.getMentor().getName() + "@redhat.com");
+            }).collect(Collectors.toList());
+        attendees.add(new EventAttendee().setEmail(wingsRun.getStudent() + "@redhat.com").setResponseStatus("accepted"));
+
+        event.setOrganizer(new Organizer().setEmail(wingsRun.getStudent() + "@redhat.com"));
+
+        event.setAttendees(attendees);
+
+        service.events().insert(wingsRun.getStudent() + "@redhat.com", event).setConferenceDataVersion(1).execute();
+        return true;
     }
 
     /**
@@ -126,9 +209,9 @@ public class GoogleCalendarIntegration {
             LocalDateTime eventEnd;
             if (event.getStart().getDateTime() != null) {
                 eventStart = LocalDateTime.parse(event.getStart().getDateTime().toString(),
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+                        DateTimeFormatter.ofPattern(DATETIME_FORMAT));
                 eventEnd = LocalDateTime.parse(event.getEnd().getDateTime().toString(),
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+                        DateTimeFormatter.ofPattern(DATETIME_FORMAT));
 
             } else {
                 eventStart = LocalDate.parse(event.getStart().getDate().toString()).atStartOfDay();

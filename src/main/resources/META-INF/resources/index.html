@@ -42,13 +42,16 @@
     </div>
     <div>
         <button type="button" class="btn btn-light" data-toggle="modal" data-target="#timeslotDialog">
-            <span class="fas fa-plus"></span> Add timeslot
+            <span class="fas fa-plus"></span> Add Timeslot
         </button>
         <button type="button" class="btn btn-light" data-toggle="modal" data-target="#mentorDialog">
             <span class="fas fa-plus"></span> Add Mentor
         </button>
         <button type="button" class="btn btn-light" data-toggle="modal" data-target="#wingsRunDialog">
             <span class="fas fa-plus"></span> Add Wings Run
+        </button>
+        <button type="button" class="btn btn-light" data-toggle="modal" data-target="#meetingsDialog">
+            <span class="fas fa-envelope"></span> Send Meeting Invites
         </button>
     </div>
     <br/>
@@ -158,6 +161,26 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary" id="addRunSubmitButton">Submit new wings run</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="meetingsDialog" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Send Meeting Invites</h4>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Send calendar invites for the current solution?</p>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="meetingsSubmitButton">Send</button>
                 </div>
             </div>
         </div>
