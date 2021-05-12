@@ -1,4 +1,4 @@
-# Popinjay
+# Popinjay 🦜
 ## AI Wings Run Scheduler
 
 This project contains a [Quarkus](https://quarkus.io/) application
