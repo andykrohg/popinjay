@@ -122,6 +122,19 @@ public class GoogleCalendarIntegration {
                 e.printStackTrace();
             }
         });
+
+        WingsRun.listAll().parallelStream().map(wingsRun -> (WingsRun) wingsRun).forEach(wingsRun -> {
+            if (! schedules.containsKey(wingsRun.getStudent())) {
+                List<Event> studentSchedule;
+                try {
+                    studentSchedule = getScheduleByUsername(wingsRun.getStudent());
+                    schedules.put(wingsRun.getStudent(), studentSchedule);
+                } catch (IOException | GeneralSecurityException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     public static boolean createEvent(WingsRun wingsRun, List<MentorAssignment> mentorAssignments) throws GeneralSecurityException, IOException {

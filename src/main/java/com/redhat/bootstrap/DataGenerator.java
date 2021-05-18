@@ -51,29 +51,27 @@ public class DataGenerator {
 
         //Mentor List
         mentorList.add(new Mentor("aromerot", 5, "afouladi"));
-        // mentorList.add(new Mentor("erchen", 6, null));
-        // mentorList.add(new Mentor("akrohg", 5, "rcabrera"));
-        // mentorList.add(new Mentor("enham", 4, null));
-        // mentorList.add(new Mentor("adtaylor", 5, null));
-        // mentorList.add(new Mentor("lkinser", 5, null));
-        // mentorList.add(new Mentor("jrampras", 5, "jbowman"));
-        // mentorList.add(new Mentor("micdavis", 5, null));
-        // mentorList.add(new Mentor("bcox", 4, "jkeam"));
-        // mentorList.add(new Mentor("mkuriti", 4, "dvanbale"));
-        // mentorList.add(new Mentor("jdudash", 2, null));
-        // mentorList.add(new Mentor("gdykeman", 2, null));
-        // mentorList.add(new Mentor("pbruszew", 1, null));
-        // mentorList.add(new Mentor("tobo", 1, null));
+        mentorList.add(new Mentor("erchen", 6, null));
+        mentorList.add(new Mentor("akrohg", 5, "rcabrera"));
+        mentorList.add(new Mentor("enham", 4, null));
+        mentorList.add(new Mentor("adtaylor", 5, null));
+        mentorList.add(new Mentor("lkinser", 5, null));
+        mentorList.add(new Mentor("jrampras", 5, "jbowman"));
+        mentorList.add(new Mentor("micdavis", 5, null));
+        mentorList.add(new Mentor("bcox", 4, "jkeam"));
+        mentorList.add(new Mentor("mkuriti", 4, "dvanbale"));
+        mentorList.add(new Mentor("jdudash", 2, null));
+        mentorList.add(new Mentor("gdykeman", 2, null));
+        mentorList.add(new Mentor("pbruszew", 1, null));
+        mentorList.add(new Mentor("tobo", 1, null));
 
+        Mentor.persist(mentorList);
 
         // YOUR INFO HERE
         String username = "akrohg";
-        int numMiddlewareOverviewRuns = 1;
-        int numDeepDiveRuns = 0;
-        // END
-
-        mentorList.add(new Mentor(username, 1, null));
-        Mentor.persist(mentorList);
+        int numMiddlewareOverviewRuns = 2;
+        int numDeepDiveRuns = 2;
+        // END        
 
         List<WingsRun> wingsRunList = new ArrayList<WingsRun>();
         for (int i = 0; i < numMiddlewareOverviewRuns; i++) {
