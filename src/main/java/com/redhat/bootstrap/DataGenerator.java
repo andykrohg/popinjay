@@ -64,6 +64,7 @@ public class DataGenerator {
         mentorList.add(new Mentor("gdykeman", 2, null));
         mentorList.add(new Mentor("pbruszew", 1, null));
         mentorList.add(new Mentor("tobo", 1, null));
+        mentorList.add(new Mentor("estoner", 4, null));
 
         Mentor.persist(mentorList);
 
